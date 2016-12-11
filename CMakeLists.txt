@@ -81,8 +81,15 @@ endif(WANT_DIALOG)
 # Find Allegro
 find_package(Alleg 5.2 REQUIRED COMPONENTS ${Alleg_Components})
 
+# Find GLM
+find_package(GLM REQUIRED)
+list(APPEND Vivace_Include_Dirs "${GLM_INCLUDE_DIRS}")
+
 # Gather sources
-set(SOURCES src/init.cpp)
+set(SOURCES
+  src/base.cpp
+  src/loops.cpp
+  src/object.cpp)
 
 # Helper macro to add source files in the game's cmake script
 macro(add_sources)

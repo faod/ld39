@@ -15,13 +15,10 @@
 */
 
 #include <vivace/vivace.hpp>
-#include <vivace/allegro.hpp>
-
-#include <string>
 
 namespace vivace {
 
-Vivace::Vivace(const std::string &app_name, const std::string &org_name)
+Vivace::Vivace(const std::string& app_name, const std::string& org_name)
 {
 	if (!app_name.empty()) {
 		al_set_app_name(app_name.c_str());

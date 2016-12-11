@@ -14,33 +14,31 @@
 	limitations under the License.
 */
 
-#ifndef V_BASE_HPP
-#define V_BASE_HPP
-#pragma once
-
-#include <stdexcept>
 #include <string>
 
 namespace vivace {
 
-class Vivace {
+// If first parameter is `false`, throws a Vivace_Error with given message
+void inline runtime_assert(bool test, const std::string& message)
+{
+	if (!test) {
+		throw new Vivace_Error(message);
+	}
+}
+
+// We are working with C libraries and RAII is not possible
+// This class emulates Java's finally block
+class finally
+{
 public:
-	// Initialises the engine, call only once
-	Vivace(const std::string& app_name, const std::string& org_name);
+	finally(const std::function<void(void)>& functor) : functor(functor) {}
 
-	Vivace(Vivace&)         = delete;
-	void operator=(Vivace&) = delete;
-
-	~Vivace();
-};
-
-// Exceptions thrown by the engine are instances of this class
-class Vivace_Error: public std::runtime_error {
-public:
-	Vivace_Error(const std::string& reason): runtime_error(reason) {}
-	Vivace_Error(const char* reason):        runtime_error(reason) {}
+	~finally()
+	{
+		functor();
+	}
+private:
+    std::function<void(void)> functor;
 };
 
 }
-
-#endif // V_BASE_HPP

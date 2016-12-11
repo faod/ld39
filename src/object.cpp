@@ -14,33 +14,34 @@
 	limitations under the License.
 */
 
-#ifndef V_BASE_HPP
-#define V_BASE_HPP
-#pragma once
-
-#include <stdexcept>
-#include <string>
+#include <vivace/vivace.hpp>
 
 namespace vivace {
 
-class Vivace {
-public:
-	// Initialises the engine, call only once
-	Vivace(const std::string& app_name, const std::string& org_name);
-
-	Vivace(Vivace&)         = delete;
-	void operator=(Vivace&) = delete;
-
-	~Vivace();
-};
-
-// Exceptions thrown by the engine are instances of this class
-class Vivace_Error: public std::runtime_error {
-public:
-	Vivace_Error(const std::string& reason): runtime_error(reason) {}
-	Vivace_Error(const char* reason):        runtime_error(reason) {}
-};
-
+void Object_aggregator::add(Object& object)
+{
+	objects.push_front(object);
 }
 
-#endif // V_BASE_HPP
+void Object_aggregator::update()
+{
+	for (auto& object: objects) {
+		object.get().update();
+	}
+}
+
+void Object_aggregator::draw()
+{
+	for (auto& object: objects) {
+		object.get().draw();
+	}
+}
+
+void Object_aggregator::handle(const ALLEGRO_EVENT& event)
+{
+	for (auto& object: objects) {
+		object.get().handle(event);
+	}
+}
+
+}

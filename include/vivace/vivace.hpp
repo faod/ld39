@@ -16,3 +16,6 @@
 
 #include "allegro.hpp"
 #include "base.hpp"
+#include "object.hpp"
+#include "loops.hpp"
+#include "utils.hpp"
