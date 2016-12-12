@@ -27,7 +27,7 @@ class Basic_loop {
 public:
 	// framerate: timespan between two invocations
 	// object: invoked at a fixed rate
-	// throws a Vivace_Error exception if framerate <= 0.
+	// throws a Vivace_Error exception if framerate < 0.
 	Basic_loop(double framerate, Object &object);
 	// You have no interest in copying this object
 	Basic_loop(Basic_loop& v) = delete;
@@ -35,7 +35,7 @@ public:
 	// get the framerate
 	double get_framerate();
 	// set the framerate
-	// throws a Vivace_Error exception if framerate <= 0.
+	// throws a Vivace_Error exception if framerate < 0.
 	void set_framerate(double framerate);
 
 	// Add and event source, must not be a Timer event source
@@ -47,9 +47,13 @@ protected:
 	// Constructor parameter
 	Object& object;
 	// To manage event sources
-	std::unique_ptr<ALLEGRO_EVENT_QUEUE, al_event_queue_deleter> ev_queue;
+	const std::unique_ptr<ALLEGRO_EVENT_QUEUE, al_event_queue_deleter> ev_queue;
 	// To generate timer events at a fixed rate
-	std::unique_ptr<ALLEGRO_TIMER, al_timer_deleter> timer;
+	const std::unique_ptr<ALLEGRO_TIMER, al_timer_deleter> timer;
+
+private:
+	void run_timed();
+	void run_untimed();
 };
 
 }

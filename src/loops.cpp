@@ -25,12 +25,15 @@ namespace vivace {
 Basic_loop::Basic_loop(double framerate, Object& object):
 	object(object),
 	ev_queue(al_create_event_queue()),
-	timer(al_create_timer(framerate))
+	timer(framerate > 0 ? al_create_timer(framerate) : nullptr)
 {
-	runtime_assert(framerate > 0., "Invalid framerate, must be greater than 0"s);
+	runtime_assert(framerate >= 0., "Invalid framerate, must be greater than 0"s);
 	runtime_assert(static_cast<bool>(ev_queue), "Could not create an event queue"s);
-	runtime_assert(static_cast<bool>(timer), "Could not create a timer"s);
-	al_register_event_source(ev_queue.get(), al_get_timer_event_source(timer.get()));
+	runtime_assert(framerate == 0. || static_cast<bool>(timer), "Could not create a timer"s);
+	// Timer is NULL if framerate == 0
+	if (timer) {
+		al_register_event_source(ev_queue.get(), al_get_timer_event_source(timer.get()));
+	}
 }
 
 double Basic_loop::get_framerate()
@@ -52,13 +55,24 @@ void Basic_loop::register_event_source(ALLEGRO_EVENT_SOURCE* ev_source)
 
 void Basic_loop::run()
 {
+	if (timer) {
+		run_timed();
+	}
+	else {
+		run_untimed();
+	}
+}
+
+// if timer != nullptr
+void Basic_loop::run_timed()
+{
 	al_flush_event_queue(ev_queue.get());
 	al_pause_event_queue(ev_queue.get(), false);
 	al_start_timer(timer.get());
 	finally f([&]{
-		al_stop_timer(timer.get());
-		al_pause_event_queue(ev_queue.get(), true);
-		al_flush_event_queue(ev_queue.get());
+			al_stop_timer(timer.get());
+			al_pause_event_queue(ev_queue.get(), true);
+			al_flush_event_queue(ev_queue.get());
 	});
 
 	ALLEGRO_EVENT_SOURCE* timer_evs = al_get_timer_event_source(timer.get());
@@ -72,6 +86,30 @@ void Basic_loop::run()
 		}
 		else {
 			object.handle(ev);
+		}
+	}
+}
+
+// if timer == nullptr
+void Basic_loop::run_untimed()
+{
+	al_flush_event_queue(ev_queue.get());
+	al_pause_event_queue(ev_queue.get(), false);
+	finally f([&]{
+			al_pause_event_queue(ev_queue.get(), true);
+			al_flush_event_queue(ev_queue.get());
+	});
+
+	ALLEGRO_EVENT ev;
+	for(;;)
+	{
+		// Warning: if the event queue is never empty or handle() is slow, risk of starvation
+		if (al_get_next_event(ev_queue.get(), &ev)) {
+			object.handle(ev);
+		}
+		else {
+			object.update();
+			object.draw();
 		}
 	}
 }
