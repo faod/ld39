@@ -114,4 +114,4 @@ void Basic_loop::run_untimed()
 	}
 }
 
-}
+} // namespace vivace

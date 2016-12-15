@@ -41,4 +41,4 @@ private:
     std::function<void(void)> functor;
 };
 
-}
+} // namespace vivace

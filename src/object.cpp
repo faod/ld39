@@ -44,4 +44,48 @@ void Object_aggregator::handle(const ALLEGRO_EVENT& event)
 	}
 }
 
+// ----
+
+void Object_split_aggregator::draw()
+{
+	for (auto& function: draw_functions) {
+		function();
+	}
 }
+
+void Object_split_aggregator::update()
+{
+	for (auto& function: update_functions) {
+		function();
+	}
+}
+
+void Object_split_aggregator::handle(const ALLEGRO_EVENT& event)
+{
+	for (auto& function: handle_functions) {
+		function(event);
+	}
+}
+
+
+void Object_split_aggregator::add_draw_front(std::function<void()> draw_func)
+{
+	draw_functions.push_front(draw_func);
+}
+
+void Object_split_aggregator::add_draw_back(std::function<void()> draw_func)
+{
+	draw_functions.push_back(draw_func);
+}
+
+void Object_split_aggregator::add_update(std::function<void()> update_func)
+{
+	update_functions.push_front(update_func);
+}
+
+void Object_split_aggregator::add_handle(std::function<void(const ALLEGRO_EVENT&)> handle_func)
+{
+	handle_functions.push_front(handle_func);
+}
+
+} // namespace vivace

@@ -56,6 +56,6 @@ private:
 	void run_untimed();
 };
 
-}
+} // namespace vivace
 
 #endif // V_LOOP_HPP

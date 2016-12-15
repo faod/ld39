@@ -20,6 +20,7 @@
 
 #include <forward_list>
 #include <functional>
+#include <list>
 
 namespace vivace {
 
@@ -40,6 +41,8 @@ public:
 	Object_aggregator() {};
 	Object_aggregator(Object_aggregator& v) = delete;
 
+	// Add given object to a forward_list (insert at head)
+	// Objects will be visited in the reverse order
 	void add(Object& object);
 
 	virtual void update();
@@ -50,6 +53,31 @@ protected:
 	std::forward_list<std::reference_wrapper<Object>> objects;
 };
 
-}
+// Delegates to multiple functions
+class Object_split_aggregator: public Object {
+public:
+	Object_split_aggregator() {};
+	Object_split_aggregator(Object_split_aggregator& v) = delete;
+
+	virtual void update();
+	virtual void draw();
+	virtual void handle(const ALLEGRO_EVENT& event);
+
+	// Add a draw() function to a list
+	// At front (first visited) or at back (last visited)
+	void add_draw_front(std::function<void()> draw_func);
+	void add_draw_back(std::function<void()> draw_func);
+	// Add an update() function to a forward_list
+	void add_update(std::function<void()> update_func);
+	// Add a handle() function to a forward_list
+	void add_handle(std::function<void(const ALLEGRO_EVENT&)> handle_func);
+
+protected:
+	std::list<std::function<void()>> draw_functions;
+	std::forward_list<std::function<void()>> update_functions;
+	std::forward_list<std::function<void(const ALLEGRO_EVENT&)>> handle_functions;
+};
+
+} // namespace vivace
 
 #endif // V_OBJECT_HPP

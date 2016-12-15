@@ -41,6 +41,6 @@ public:
 	Vivace_Error(const char* reason):        runtime_error(reason) {}
 };
 
-}
+} // namespace vivace
 
 #endif // V_BASE_HPP

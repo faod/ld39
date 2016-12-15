@@ -63,4 +63,4 @@ Vivace::~Vivace()
 	al_uninstall_system();
 }
 
-}
+} // namespace vivace

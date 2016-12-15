@@ -63,7 +63,7 @@ public:
 	{
 		al_clear_to_color(bg_colour);
 		al_draw_filled_rectangle(380+pos.x, 280-pos.y, 420+pos.x, 320-pos.y, char_colour);
-		
+
 		al_draw_text(dbg_font.get(), al_map_rgb_f(1,1,1), 792, 8, ALLEGRO_ALIGN_RIGHT, fps_string.c_str());
 		al_flip_display();
 	};
@@ -108,7 +108,7 @@ public:
 private:
 	double last_update = 0.;
 	double delta_t = 0.;
-	double sum_t = 0.; 
+	double sum_t = 0.;
 	string fps_string;
 	ALLEGRO_COLOR bg_colour;
 	ALLEGRO_COLOR char_colour;
