@@ -100,6 +100,8 @@ public:
 				speed = normalize(speed);
 			}
 			break;
+        case ALLEGRO_EVENT_KEY_CHAR:
+            break;
 		default:
 			cerr << "Unknown event type " << event.type << endl;
 		}
