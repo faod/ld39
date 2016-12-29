@@ -14,8 +14,8 @@
 	limitations under the License.
 */
 
-#ifndef ALLEGRO_HPP
-#define ALLEGRO_HPP
+#ifndef V_ALLEGRO_HPP
+#define V_ALLEGRO_HPP
 #pragma once
 
 // Deleter template using Alleg's destroy functions (for unique_ptr, shared_ptr, ...);
@@ -94,4 +94,4 @@ class al_textlog_deleter: public al_deleter<ALLEGRO_TEXTLOG, al_close_native_tex
 class al_menu_deleter: public al_deleter<ALLEGRO_MENU, al_destroy_menu> {};
 #endif
 
-#endif /* ALLEGRO_HPP */
+#endif // V_ALLEGRO_HPP
