@@ -19,3 +19,4 @@
 #include "object.hpp"
 #include "loops.hpp"
 #include "utils.hpp"
+#include "animation.hpp"

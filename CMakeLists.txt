@@ -89,7 +89,8 @@ list(APPEND Vivace_Include_Dirs "${GLM_INCLUDE_DIRS}")
 set(SOURCES
   src/base.cpp
   src/loops.cpp
-  src/object.cpp)
+  src/object.cpp
+  src/animation.cpp)
 
 # Helper macro to add source files in the game's cmake script
 macro(add_sources)

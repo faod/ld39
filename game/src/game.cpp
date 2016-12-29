@@ -32,10 +32,15 @@ using namespace glm;
 class Game: public Object {
 public:
 	Game():
-		dbg_font(al_create_builtin_font())
+	    dbg_font(al_create_builtin_font()),
+	    character(true)
 	{
 		bg_colour   = al_color_hsv(0., .8, .2);
-		char_colour = al_color_hsv(200., .8, .2);
+		johnny = unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter>(al_load_bitmap("data/johnny_running.png"));
+		for (int i=0; i<8; i++) {
+			ALLEGRO_BITMAP* bmp = al_create_sub_bitmap(johnny.get(), 35*i, 0, 35, 68);
+			character.add_frame(shared_ptr<ALLEGRO_BITMAP>(bmp, al_bitmap_deleter()), 0.1);
+		}
 	}
 
 	virtual void update()
@@ -50,6 +55,7 @@ public:
 			pos.y += speed.y * 50. * delta_t;
 		}
 		last_update = this_update;
+		character.update(delta_t);
 
 		sum_t += delta_t;
 		if (sum_t >= 1.)
@@ -62,7 +68,7 @@ public:
 	virtual void draw()
 	{
 		al_clear_to_color(bg_colour);
-		al_draw_filled_rectangle(380+pos.x, 280-pos.y, 420+pos.x, 320-pos.y, char_colour);
+		al_draw_bitmap(character.current().get(), 380+pos.x, 280-pos.y, 0);
 
 		al_draw_text(dbg_font.get(), al_map_rgb_f(1,1,1), 792, 8, ALLEGRO_ALIGN_RIGHT, fps_string.c_str());
 		al_flip_display();
@@ -113,7 +119,10 @@ private:
 	double sum_t = 0.;
 	string fps_string;
 	ALLEGRO_COLOR bg_colour;
-	ALLEGRO_COLOR char_colour;
+
+	Sprite_animation character;
+	unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter> johnny;
+
 	vec2 pos{0., 0.}; // position in meter
 	vec2 speed{0., 0.}; // in meter per seconds
 	unique_ptr<ALLEGRO_FONT, al_font_deleter> dbg_font; // TODO move to global scope
