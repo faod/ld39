@@ -89,8 +89,7 @@ list(APPEND Vivace_Include_Dirs "${GLM_INCLUDE_DIRS}")
 set(SOURCES
   src/base.cpp
   src/loops.cpp
-  src/object.cpp
-  src/animation.cpp)
+  src/object.cpp)
 
 # Helper macro to add source files in the game's cmake script
 macro(add_sources)
@@ -112,6 +111,9 @@ set_target_properties(${GAME_NAME} PROPERTIES
 
 # Add directories to the include search path
 target_include_directories(${GAME_NAME} PRIVATE ${Vivace_Include_Dirs})
+
+# Group header sources
+source_group(vivace_headers REGULAR_EXPRESSION "include/vivace/*")
 
 # Link with dependencies
 target_link_libraries(${GAME_NAME} ${Vivace_Libraries})

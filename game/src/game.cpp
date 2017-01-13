@@ -120,7 +120,7 @@ private:
 	string fps_string;
 	ALLEGRO_COLOR bg_colour;
 
-	Sprite_animation character;
+	Animation<shared_ptr<ALLEGRO_BITMAP>> character;
 	unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter> johnny;
 
 	vec2 pos{0., 0.}; // position in meter
