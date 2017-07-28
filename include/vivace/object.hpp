@@ -27,7 +27,9 @@ namespace vivace {
 // Base class for "things" handled by mainloops
 class Object {
 public:
-	// Update this object
+	// Virtual dtor so Object can be properly overloaded
+    virtual ~Object() = default;
+    // Update this object
 	virtual void update() = 0;
 	// Draw this object
 	virtual void draw() = 0;
