@@ -16,6 +16,7 @@
 
 #include <vivace/vivace.hpp>
 #include "cyclist.hpp"
+#include "map.hpp"
 using namespace vivace;
 
 #include <exception>
@@ -32,15 +33,17 @@ using namespace glm;
 
 class Game: public Object_full_aggregator {
 public:
-	Game()
+	Game():
+		level("data/maps/01.tmx")
 	    //character(true)
 	{
-		bg_colour   = al_color_hsv(0., .8, .2);
+		bg_colour = level.bg_color;
 		//johnny = unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter>(al_load_bitmap("data/johnny_running.png"));
 		for (int i=0; i<8; i++) {
 			//ALLEGRO_BITMAP* bmp = al_create_sub_bitmap(johnny.get(), 35*i, 0, 35, 68);
 			//character.add_frame(shared_ptr<ALLEGRO_BITMAP>(bmp, al_bitmap_deleter()), 0.1);
 		}
+		
         add(player_);
 	}
 
@@ -67,6 +70,7 @@ public:
 	virtual void draw()
 	{
 		al_clear_to_color(bg_colour);
+		al_draw_bitmap(level.bitmap.get(), 0.f, 0.f, 0);
 		//al_draw_bitmap(character.current().get(), 380+pos.x, 280-pos.y, 0);
         Object_full_aggregator::draw();
 		al_draw_text(debug_font(), al_map_rgb_f(1,1,1), 792, 8, ALLEGRO_ALIGN_RIGHT, fps_string.c_str());
@@ -126,6 +130,8 @@ private:
 
     PlayerCyclist player_;
 
+	map level;
+
 	void mk_fps_string(double delta_t)
 	{
 		ostringstream oss;
@@ -138,6 +144,7 @@ int main(void) {
 	try {
         std::srand(std::time(nullptr));
 		Vivace engine("GAME_NAME"s, ""s);
+		map::initialize();
 		unique_ptr<ALLEGRO_DISPLAY, al_display_deleter> dsp(al_create_display(800, 600));
 		Game game;
 		Basic_loop main_loop(1/30., game);
