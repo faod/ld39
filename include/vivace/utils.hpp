@@ -14,6 +14,10 @@
 	limitations under the License.
 */
 
+#ifndef V_UTILS_HPP
+#define V_UTILS_HPP
+#pragma once
+
 #include <string>
 
 namespace vivace {
@@ -42,3 +46,5 @@ private:
 };
 
 } // namespace vivace
+
+#endif // V_UTILS_HPP
