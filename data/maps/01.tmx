@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="16" tileheight="16" backgroundcolor="#16530c" nextobjectid="6">
+ <tileset firstgid="1" name="roads" tilewidth="16" tileheight="16" spacing="1" tilecount="66" columns="11">
+  <image source="roads.png" width="186" height="101"/>
+ </tileset>
+ <layer name="map" width="32" height="32">
+  <data encoding="base64" compression="zlib">
+   eJzt1ksKgCAQBuABCys30uMcncD7XysFFyJiPma0QOGHsMWHi1+HA8DVKYvOpsM6ZXX8SWdulCngy4bnli/+SZQU3+xRrZD1Nd8Eu2O5PnbHUnzs/rkdS/EpOxbzd6DvWMzHXjFj+MP3/3Gou99q/ZL+3zrKfmP5pfcflp9z/1Ocv3T+wPZrO/F336Smj7nvD9X80ap/X50/GKT52POHn8PzhfUF0Lw/sWV8ZX3Vyad+f3P9B2MzGso=
+  </data>
+ </layer>
+ <objectgroup name="lines">
+  <object id="1" name="1" x="440" y="456">
+   <polyline points="0,0 0,-384 -368,-384 -368,-336 -48,-336 -48,0 -432,0 -432,-176 -224,-176"/>
+  </object>
+  <object id="2" name="2" x="456" y="456">
+   <polyline points="0,0 0,-400 -400,-400 -400,-320 -80,-320 -80,-16 -432,-16 -432,-160 -240,-160"/>
+  </object>
+  <object id="3" name="3" x="472" y="456">
+   <polyline points="0,0 0,-416 -432,-416 -432,-304 -112,-304 -112,-32 -432,-32 -432,-144 -256,-144"/>
+  </object>
+  <object id="4" name="4" x="488" y="456">
+   <polyline points="0,0 0,-432 -464,-432 -464,-288 -144,-288 -144,-48 -432,-48 -432,-128 -272,-128"/>
+  </object>
+  <object id="5" name="5" x="504" y="456">
+   <polyline points="0,0 0,-448 -496,-448 -496,-272 -176,-272 -176,-64 -432,-64 -432,-112 -288,-112"/>
+  </object>
+ </objectgroup>
+</map>
