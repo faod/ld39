@@ -29,7 +29,7 @@ using namespace std;
 
 using namespace glm;
 
-class Game: public Object {
+class Game: public Object_full_aggregator {
 public:
 	Game():
 	    dbg_font(al_create_builtin_font()),

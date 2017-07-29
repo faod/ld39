@@ -38,14 +38,14 @@ public:
 };
 
 // An implementation that delegates to multiple instances
-class Object_aggregator: public Object {
+class Object_aggregator: public virtual Object {
 public:
 	Object_aggregator() {};
 	Object_aggregator(Object_aggregator& v) = delete;
 
 	// Add given object to a forward_list (insert at head)
 	// Objects will be visited in the reverse order
-	void add(Object& object);
+	virtual void add(Object& object);
 
 	virtual void update();
 	virtual void draw();
@@ -56,7 +56,7 @@ protected:
 };
 
 // Delegates to multiple functions
-class Object_split_aggregator: public Object {
+class Object_split_aggregator: public virtual Object {
 public:
 	Object_split_aggregator() {};
 	Object_split_aggregator(Object_split_aggregator& v) = delete;
@@ -78,6 +78,17 @@ protected:
 	std::list<std::function<void()>> draw_functions;
 	std::forward_list<std::function<void()>> update_functions;
 	std::forward_list<std::function<void(const ALLEGRO_EVENT&)>> handle_functions;
+};
+
+class Object_full_aggregator: public Object_split_aggregator, public Object_aggregator {
+public:
+    Object_full_aggregator() = default;
+
+    virtual void update();
+    virtual void draw();
+    virtual void handle(const ALLEGRO_EVENT& event);
+
+    virtual void add(Object& object);
 };
 
 } // namespace vivace
