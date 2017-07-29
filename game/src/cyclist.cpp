@@ -13,6 +13,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
+#define is_zero(x) (x < 1e-6 && x > -1e-6)
 
 #include "cyclist.hpp"
 #include <sstream>
@@ -64,7 +65,7 @@ void Cyclist::update_sprinting_ratio(double delta_t)
  * PLAYER CYCLIST
  *
  */
-PlayerCyclist::PlayerCyclist() : Cyclist(), power_(1000.)
+PlayerCyclist::PlayerCyclist() : Cyclist(), power_(1000.), track_change_time_(0.)
 {
     add_draw_back( [&]() {
             al_draw_rectangle(772, 150, 790, 500, al_map_rgb(0, 255, 0), 1.);
@@ -112,6 +113,7 @@ PlayerCyclist::~PlayerCyclist()
 void PlayerCyclist::update(double delta_t)
 {
     Cyclist::update(delta_t);
+    update_track_change(delta_t);
     power_ -= 100. * sprinting_ratio_ * delta_t;
 
     if (power_ < 0) //LOST
@@ -135,6 +137,20 @@ void PlayerCyclist::handle(const ALLEGRO_EVENT& event)
                 case ALLEGRO_KEY_LCTRL:
                     sprinting_ = true;
                     break;
+                case ALLEGRO_KEY_LEFT:
+                    if (track_ > 0 && is_zero(track_change_time_))
+                    {
+                        track_change_time_ = 1.;
+                        new_track_ = track_ - 1;
+                    }
+                    break;
+                case ALLEGRO_KEY_RIGHT:
+                    if (track_ < 4 && is_zero(track_change_time_))
+                    {
+                        track_change_time_ = 1.;
+                        new_track_ = track_ + 1;
+                    }
+                    break;
             }
             break;
         case ALLEGRO_EVENT_KEY_UP:
@@ -151,4 +167,13 @@ void PlayerCyclist::handle(const ALLEGRO_EVENT& event)
 bool PlayerCyclist::alive()
 {
     return power_ > 0;
+}
+
+void PlayerCyclist::update_track_change(float delta_t)
+{
+    track_change_time_ -= delta_t;
+    if (track_change_time_ > 0. && track_change_time_ < .5)
+        track_ = new_track_;
+    if (track_change_time_ < 0.)
+        track_change_time_ = 0;
 }
