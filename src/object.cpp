@@ -23,10 +23,10 @@ void Object_aggregator::add(Object& object)
 	objects.push_front(object);
 }
 
-void Object_aggregator::update()
+void Object_aggregator::update(double delta_t)
 {
 	for (auto& object: objects) {
-		object.get().update();
+		object.get().update(delta_t);
 	}
 }
 
@@ -53,10 +53,10 @@ void Object_split_aggregator::draw()
 	}
 }
 
-void Object_split_aggregator::update()
+void Object_split_aggregator::update(double delta_t)
 {
 	for (auto& function: update_functions) {
-		function();
+		function(delta_t);
 	}
 }
 
@@ -78,7 +78,7 @@ void Object_split_aggregator::add_draw_back(std::function<void()> draw_func)
 	draw_functions.push_back(draw_func);
 }
 
-void Object_split_aggregator::add_update(std::function<void()> update_func)
+void Object_split_aggregator::add_update(std::function<void(double)> update_func)
 {
 	update_functions.push_front(update_func);
 }
@@ -92,15 +92,15 @@ void Object_full_aggregator::add(Object& object)
 {
     std::function<void(void)> draw =  std::bind(&Object::draw, &object);
     add_draw_back(draw);
-    std::function<void(void)> update = std::bind(&Object::update, &object);
+    std::function<void(double)> update = std::bind(&Object::update, &object, std::placeholders::_1);
     add_update(update);
     std::function<void(const ALLEGRO_EVENT&)> handle = std::bind(&Object::handle, &object, std::placeholders::_1);
     add_handle(handle);
 }
 
-void Object_full_aggregator::update()
+void Object_full_aggregator::update(double delta_t)
 {
-    Object_split_aggregator::update();
+    Object_split_aggregator::update(delta_t);
 }
 
 void Object_full_aggregator::draw()

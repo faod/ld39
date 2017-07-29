@@ -22,6 +22,8 @@
 #include <functional>
 #include <list>
 
+#include <vivace/allegro.hpp>
+
 namespace vivace {
 
 // Base class for "things" handled by mainloops
@@ -30,7 +32,7 @@ public:
 	// Virtual dtor so Object can be properly overloaded
     virtual ~Object() = default;
     // Update this object
-	virtual void update() = 0;
+	virtual void update(double delta_t) = 0;
 	// Draw this object
 	virtual void draw() = 0;
 	// Handle event (not a TIMER event)
@@ -47,7 +49,7 @@ public:
 	// Objects will be visited in the reverse order
 	virtual void add(Object& object);
 
-	virtual void update();
+	virtual void update(double delta_t);
 	virtual void draw();
 	virtual void handle(const ALLEGRO_EVENT& event);
 
@@ -61,7 +63,7 @@ public:
 	Object_split_aggregator() {};
 	Object_split_aggregator(Object_split_aggregator& v) = delete;
 
-	virtual void update();
+	virtual void update(double delta_t);
 	virtual void draw();
 	virtual void handle(const ALLEGRO_EVENT& event);
 
@@ -70,13 +72,13 @@ public:
 	void add_draw_front(std::function<void()> draw_func);
 	void add_draw_back(std::function<void()> draw_func);
 	// Add an update() function to a forward_list
-	void add_update(std::function<void()> update_func);
+	void add_update(std::function<void(double)> update_func);
 	// Add a handle() function to a forward_list
 	void add_handle(std::function<void(const ALLEGRO_EVENT&)> handle_func);
 
 protected:
 	std::list<std::function<void()>> draw_functions;
-	std::forward_list<std::function<void()>> update_functions;
+	std::forward_list<std::function<void(double)>> update_functions;
 	std::forward_list<std::function<void(const ALLEGRO_EVENT&)>> handle_functions;
 };
 
@@ -84,7 +86,7 @@ class Object_full_aggregator: public Object_split_aggregator, public Object_aggr
 public:
     Object_full_aggregator() = default;
 
-    virtual void update();
+    virtual void update(double delta_t);
     virtual void draw();
     virtual void handle(const ALLEGRO_EVENT& event);
 

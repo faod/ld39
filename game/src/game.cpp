@@ -43,10 +43,8 @@ public:
 		}
 	}
 
-	virtual void update()
+	virtual void update(double delta_t)
 	{
-		double this_update = al_get_time();
-		delta_t = this_update - last_update;
 		if (delta_t >= 1.) {
 			cerr << "lag!" << endl;
 		}
@@ -54,14 +52,13 @@ public:
 			pos.x += speed.x * 50. * delta_t;
 			pos.y += speed.y * 50. * delta_t;
 		}
-		last_update = this_update;
 		character.update(delta_t);
 
 		sum_t += delta_t;
 		if (sum_t >= 1.)
 		{
 			sum_t = 0;
-			mk_fps_string();
+			mk_fps_string(delta_t);
 		}
 	};
 
@@ -114,8 +111,6 @@ public:
 	};
 
 private:
-	double last_update = 0.;
-	double delta_t = 0.;
 	double sum_t = 0.;
 	string fps_string;
 	ALLEGRO_COLOR bg_colour;
@@ -127,7 +122,7 @@ private:
 	vec2 speed{0., 0.}; // in meter per seconds
 	unique_ptr<ALLEGRO_FONT, al_font_deleter> dbg_font; // TODO move to global scope
 
-	void mk_fps_string()
+	void mk_fps_string(double delta_t)
 	{
 		ostringstream oss;
 		oss << static_cast<int>(1/delta_t) << " fps";

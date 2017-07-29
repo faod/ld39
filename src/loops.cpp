@@ -77,11 +77,17 @@ void Basic_loop::run_timed()
 
 	ALLEGRO_EVENT_SOURCE* timer_evs = al_get_timer_event_source(timer.get());
 	ALLEGRO_EVENT ev;
-	for(;;)
+
+    double delta_t = 0.;
+    double last_update = al_get_time();
+    for(;;)
 	{
 		al_wait_for_event(ev_queue.get(), &ev);
 		if (ev.any.source == timer_evs) {
-			object.update();
+            double this_update = al_get_time();
+            delta_t = this_update - last_update;
+            object.update(delta_t);
+            last_update = this_update;
 			object.draw();
 		}
 		else {
@@ -101,6 +107,8 @@ void Basic_loop::run_untimed()
 	});
 
 	ALLEGRO_EVENT ev;
+    double delta_t = 0.;
+    double last_update = al_get_time();
 	for(;;)
 	{
 		// Warning: if the event queue is never empty or handle() is slow, risk of starvation
@@ -108,7 +116,10 @@ void Basic_loop::run_untimed()
 			object.handle(ev);
 		}
 		else {
-			object.update();
+            double this_update = al_get_time();
+            delta_t = this_update - last_update;
+			object.update(delta_t);
+            last_update = this_update;
 			object.draw();
 		}
 	}
