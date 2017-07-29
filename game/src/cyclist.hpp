@@ -31,6 +31,8 @@ public:
 
     virtual ~Cyclist();
 
+    float get_pos();
+    int get_track();
 
 protected:
     float pos_;

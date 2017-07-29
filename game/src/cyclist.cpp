@@ -60,6 +60,16 @@ void Cyclist::update_sprinting_ratio(double delta_t)
         sprinting_ratio_ = glm::clamp(sprinting_ratio_ - (1 * delta_t), 1., 2.);
 }
 
+int Cyclist::get_track()
+{
+    return track_;
+}
+
+float Cyclist::get_pos()
+{
+    return pos_;
+}
+
 /**
  *
  * PLAYER CYCLIST
