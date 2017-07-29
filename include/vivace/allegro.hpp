@@ -94,4 +94,6 @@ class al_textlog_deleter: public al_deleter<ALLEGRO_TEXTLOG, void, al_close_nati
 class al_menu_deleter: public al_deleter<ALLEGRO_MENU, void, al_destroy_menu> {};
 #endif
 
+ALLEGRO_FONT* debug_font();
+
 #endif // V_ALLEGRO_HPP

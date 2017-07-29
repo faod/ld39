@@ -87,6 +87,7 @@ list(APPEND Vivace_Include_Dirs "${GLM_INCLUDE_DIRS}")
 
 # Gather sources
 set(SOURCES
+  src/allegro.cpp
   src/base.cpp
   src/loops.cpp
   src/object.cpp)

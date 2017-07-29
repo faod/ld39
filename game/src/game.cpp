@@ -32,7 +32,6 @@ using namespace glm;
 class Game: public Object_full_aggregator {
 public:
 	Game():
-	    dbg_font(al_create_builtin_font()),
 	    character(true)
 	{
 		bg_colour   = al_color_hsv(0., .8, .2);
@@ -67,7 +66,7 @@ public:
 		al_clear_to_color(bg_colour);
 		al_draw_bitmap(character.current().get(), 380+pos.x, 280-pos.y, 0);
 
-		al_draw_text(dbg_font.get(), al_map_rgb_f(1,1,1), 792, 8, ALLEGRO_ALIGN_RIGHT, fps_string.c_str());
+		al_draw_text(debug_font(), al_map_rgb_f(1,1,1), 792, 8, ALLEGRO_ALIGN_RIGHT, fps_string.c_str());
 		al_flip_display();
 	};
 
@@ -120,7 +119,6 @@ private:
 
 	vec2 pos{0., 0.}; // position in meter
 	vec2 speed{0., 0.}; // in meter per seconds
-	unique_ptr<ALLEGRO_FONT, al_font_deleter> dbg_font; // TODO move to global scope
 
 	void mk_fps_string(double delta_t)
 	{
