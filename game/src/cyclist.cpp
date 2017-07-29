@@ -36,6 +36,7 @@ Cyclist::~Cyclist()
 void Cyclist::update(double delta_t)
 {
     //update cyclist movement
+    pos_.y += speed_ * 50. * delta_t;
 }
 
 void Cyclist::draw()
@@ -70,6 +71,7 @@ PlayerCyclist::PlayerCyclist() : Cyclist(), power_(1000)
 #ifdef POS
     add_draw_back( [&]() {
             std::ostringstream oss;
+            oss.precision(5);
             oss << "x: " << pos_.x << " y: " << pos_.y;
             al_draw_text(debug_font(), al_map_rgb(255, 255, 255), 10, 10, ALLEGRO_ALIGN_LEFT, oss.str().c_str());
             });
@@ -83,6 +85,12 @@ PlayerCyclist::~PlayerCyclist()
 void PlayerCyclist::update(double delta_t)
 {
     Cyclist::update(delta_t);
+    power_ -= speed_ * 50. * delta_t;
+
+    if (power_ < 0) //LOST
+    {
+        power_ = 0;
+    }
 }
 void PlayerCyclist::draw()
 {
@@ -91,4 +99,9 @@ void PlayerCyclist::draw()
 }
 void PlayerCyclist::handle(const ALLEGRO_EVENT& event) 
 {
+}
+
+bool PlayerCyclist::alive()
+{
+    return power_ > 0;
 }

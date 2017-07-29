@@ -46,6 +46,8 @@ public:
 
     virtual ~PlayerCyclist();
 
+    bool alive();
+
 private:
     int power_;
     //Right now, a soft maxpower used to limit the drawing of power
