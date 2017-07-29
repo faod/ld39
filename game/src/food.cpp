@@ -16,6 +16,7 @@
 
 #include "food.hpp"
 #include "game.hpp"
+#include "map.hpp"
 #include <functional>
 #include <glm/glm.hpp>
 #include <glm/gtc/random.hpp>
@@ -26,13 +27,25 @@
  * FOOD
  *
  */
-Food::Food(glm::dvec3 pos, int track) : pos_(pos), track_(track)
+Food::Food(glm::dvec3 pos, int track, int power) : pos_(pos), track_(track), power_(power)
 {
+    void* sp = nullptr;
+    if (power_ < 700)
+        sp = al_img_loader("data/banana.png");
+    else if (power_ < 1100)
+        sp = al_img_loader("data/epo.png");
+    else
+        sp = al_img_loader("data/powerade.png");
+
+    sprite_ = std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter>(reinterpret_cast<ALLEGRO_BITMAP*>(sp));
 }
 
 void Food::draw() const
 {
-    al_draw_filled_rectangle(pos_.x - 5, pos_.y - 5, pos_.x + 5, pos_.y + 5, al_map_rgb(0, 0, 255));
+    al_draw_bitmap(sprite_.get(),
+                   pos_.x - 8,
+                   pos_.y - 8,
+                   0);
 }
 
 int Food::get_track() const
@@ -76,8 +89,9 @@ void FoodSpawner::spawn()
     const double tsize = level_.get().tracks[track].get16pxPercentage();
     auto& p = player_.get();
     const float pos = glm::linearRand(p.get_pos() + tsize, p.get_pos() + tsize * 8);
+    const int power = glm::linearRand(300, 1500);
     assert(game_);
-    game_->spawn_food(std::make_unique<Food>(level_.get().tracks[track].getPosition(pos), track));
+    game_->spawn_food(std::make_unique<Food>(level_.get().tracks[track].getPosition(pos), track, power));
 }
 
 void FoodSpawner::set_game(Game* g)
