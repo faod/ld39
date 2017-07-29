@@ -19,9 +19,9 @@
 
 ALLEGRO_FONT* debug_font()
 {
-    static std::unique_ptr<ALLEGRO_FONT, al_font_deleter> dbg_ft;
+    static ALLEGRO_FONT* dbg_ft = nullptr;
     if (!dbg_ft)
-        dbg_ft = std::unique_ptr<ALLEGRO_FONT, al_font_deleter>(al_create_builtin_font());
+        dbg_ft = al_create_builtin_font();
 
-    return dbg_ft.get();
+    return dbg_ft;
 }
