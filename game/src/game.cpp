@@ -36,6 +36,7 @@ using namespace glm;
 
 Game::Game():
 		level("data/maps/01.tmx"),
+        player_(level.tracks[2].get16pxPercentage()),
         foodspawner_(player_, level),
         layer_(al_create_bitmap(level.width, level.height))
 {

@@ -37,8 +37,8 @@ private:
     std::string fps_string;
     ALLEGRO_COLOR bg_colour;
 
-    PlayerCyclist player_;
     map level;
+    PlayerCyclist player_;
     FoodSpawner foodspawner_;
 
     std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter> layer_;

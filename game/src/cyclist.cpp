@@ -23,9 +23,12 @@
  * CYCLIST 
  *
  */
-Cyclist::Cyclist() : pos_(0.), speed_(0.01), sprinting_(false), sprinting_ratio_(1.), track_(2)
+Cyclist::Cyclist(ALLEGRO_BITMAP* sp) : pos_(0.), speed_(0.01), sprinting_(false), sprinting_ratio_(1.), track_(2)
 {
-    sprite_ = std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter>(reinterpret_cast<ALLEGRO_BITMAP*>(al_img_loader("data/maillot_jaune.png")));
+    if (!sp)
+        sp = reinterpret_cast<ALLEGRO_BITMAP*>(al_img_loader("data/maillot_blend.png"));
+
+    sprite_ = std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter>(sp);
 }
 
 Cyclist::~Cyclist()
@@ -82,8 +85,12 @@ float Cyclist::get_pos()
  * PLAYER CYCLIST
  *
  */
-PlayerCyclist::PlayerCyclist() : Cyclist(), power_(1000.), track_change_time_(0.)
+PlayerCyclist::PlayerCyclist(float forwardper16px) : 
+    Cyclist(reinterpret_cast<ALLEGRO_BITMAP*>(al_img_loader("data/maillot_jaune.png"))), 
+    power_(1000.), 
+    track_change_time_(0.)
 {
+    speed_ = forwardper16px * 3;
     add_draw_back( [&]() {
             al_draw_rectangle(772, 150, 790, 500, al_map_rgb(0, 255, 0), 1.);
             
@@ -162,14 +169,14 @@ void PlayerCyclist::handle(const ALLEGRO_EVENT& event)
                 case ALLEGRO_KEY_LEFT:
                     if (track_ > 0 && is_zero(track_change_time_))
                     {
-                        track_change_time_ = 1.;
+                        track_change_time_ = .4;
                         new_track_ = track_ - 1;
                     }
                     break;
                 case ALLEGRO_KEY_RIGHT:
                     if (track_ < 4 && is_zero(track_change_time_))
                     {
-                        track_change_time_ = 1.;
+                        track_change_time_ = .4;
                         new_track_ = track_ + 1;
                     }
                     break;
@@ -194,7 +201,7 @@ bool PlayerCyclist::alive()
 void PlayerCyclist::update_track_change(float delta_t)
 {
     track_change_time_ -= delta_t;
-    if (track_change_time_ > 0. && track_change_time_ < .5)
+    if (track_change_time_ > 0. && track_change_time_ < .2)
         track_ = new_track_;
     if (track_change_time_ < 0.)
         track_change_time_ = 0;

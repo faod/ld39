@@ -24,7 +24,7 @@
 
 class Cyclist : public virtual vivace::Object {
 public:
-    Cyclist();
+    Cyclist(ALLEGRO_BITMAP* sp = nullptr);
     virtual void update(double delta_t) override;
     virtual void draw() override;
     virtual void handle(const ALLEGRO_EVENT& event) override;
@@ -49,7 +49,7 @@ protected:
 
 class PlayerCyclist : public Cyclist, public vivace::Object_split_aggregator {
 public:
-    PlayerCyclist();
+    PlayerCyclist(float forwardper16px);
     virtual void update(double delta_t) override;
     virtual void draw() override;
     virtual void handle(const ALLEGRO_EVENT& event) override;
