@@ -162,6 +162,9 @@ track::track(double** points, int points_len, double off_x, double off_y)
 		double x, y;
 		x = off_x + points[it][0];
 		y = off_y + points[it][1];
+#ifndef NDEBUG
+		std::cout << "tracks point " << it+1 << " (x, y) = " << x << ", " << y << std::endl;
+#endif
 		this->points.push_back(glm::dvec2(x, y));
 	}
 
@@ -202,7 +205,7 @@ glm::dvec2 track::getPosition(double completion_percentage) const
 		}
 		else {
 			glm::dvec2 direction = glm::normalize(glm::dvec2(point.x - prev.x, point.y - prev.y));
-			return point + (dist * direction);
+			return prev + (real_length * direction);
 		}
 	}
 
