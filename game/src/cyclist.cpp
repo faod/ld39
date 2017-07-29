@@ -24,7 +24,7 @@
  */
 Cyclist::Cyclist() : pos_(0.), speed_(0.01), sprinting_(false), sprinting_ratio_(1.), track_(2)
 {
-    sprite_ = std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter>(al_create_bitmap(32, 68));
+    sprite_ = std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter>(al_create_bitmap(10, 10));
     al_set_target_bitmap(sprite_.get());
     al_clear_to_color(al_map_rgb(255, 0, 255));
     al_set_target_bitmap(al_get_backbuffer(al_get_current_display()));
@@ -43,7 +43,7 @@ void Cyclist::update(double delta_t)
 
 void Cyclist::draw()
 {
-    al_draw_bitmap(sprite_.get(), 380, 280, 0);
+    al_draw_bitmap(sprite_.get(), 395, 445, 0);
 }
 
 void Cyclist::handle(const ALLEGRO_EVENT& event)
@@ -55,9 +55,9 @@ void Cyclist::handle(const ALLEGRO_EVENT& event)
 void Cyclist::update_sprinting_ratio(double delta_t)
 {
     if (sprinting_)
-        sprinting_ratio_ = glm::clamp(sprinting_ratio_ + (1 * delta_t), 1., 2.);
+        sprinting_ratio_ = glm::clamp(sprinting_ratio_ + delta_t, 1., 2.);
     else
-        sprinting_ratio_ = glm::clamp(sprinting_ratio_ - (1 * delta_t), 1., 2.);
+        sprinting_ratio_ = glm::clamp(sprinting_ratio_ - delta_t, 1., 2.);
 }
 
 int Cyclist::get_track()

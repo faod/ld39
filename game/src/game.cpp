@@ -73,15 +73,19 @@ public:
 	virtual void draw()
 	{
 		al_clear_to_color(bg_colour);
-		al_draw_scaled_rotated_bitmap(level.bitmap.get(),
-                                      0.f,
-                                      0.f,
-                                      1.,
-                                      1.,
-                                      2,
-                                      2,
-                                      0.,
-                                      0);
+
+        auto pos = level.tracks[player_.get_track()].getPosition(player_.get_pos());
+        al_draw_scaled_rotated_bitmap(level.bitmap.get(),
+                pos.x, // center x
+                pos.y, // center y
+                400,   // destination x
+                450,   // destination y
+                6.,    // xscale
+                6.,    // yscale
+                0.,    // angle in rad
+                0      // flags (flip)
+                );
+        //al_draw_filled_rectangle(pos.x - 5, pos.y - 5, pos.x + 5, pos.y + 5, al_map_rgb(255, 0, 128));
 		//al_draw_bitmap(character.current().get(), 380+pos.x, 280-pos.y, 0);
         Object_full_aggregator::draw();
 		al_draw_text(debug_font(), al_map_rgb_f(1,1,1), 792, 8, ALLEGRO_ALIGN_RIGHT, fps_string.c_str());
