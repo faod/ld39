@@ -22,6 +22,7 @@ using namespace vivace;
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <ctime>
 
 using namespace std;
 
@@ -135,6 +136,7 @@ private:
 
 int main(void) {
 	try {
+        std::srand(std::time(nullptr));
 		Vivace engine("GAME_NAME"s, ""s);
 		unique_ptr<ALLEGRO_DISPLAY, al_display_deleter> dsp(al_create_display(800, 600));
 		Game game;
