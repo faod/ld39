@@ -21,7 +21,7 @@
  * CYCLIST 
  *
  */
-Cyclist::Cyclist() : speed_(1.)
+Cyclist::Cyclist() : speed_(1.), sprinting_(false), sprinting_ratio_(1.)
 {
     sprite_ = std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter>(al_create_bitmap(32, 68));
     al_set_target_bitmap(sprite_.get());
@@ -36,7 +36,8 @@ Cyclist::~Cyclist()
 void Cyclist::update(double delta_t)
 {
     //update cyclist movement
-    pos_.y += speed_ * 50. * delta_t;
+    update_sprinting_ratio(delta_t);
+    pos_.y += speed_ * 50. * sprinting_ratio_ * delta_t;
 }
 
 void Cyclist::draw()
@@ -46,7 +47,16 @@ void Cyclist::draw()
 
 void Cyclist::handle(const ALLEGRO_EVENT& event)
 {
+    (void) event;
     //Handle events : void for bots
+}
+
+void Cyclist::update_sprinting_ratio(double delta_t)
+{
+    if (sprinting_)
+        sprinting_ratio_ = glm::clamp(sprinting_ratio_ + (1 * delta_t), 1., 2.);
+    else
+        sprinting_ratio_ = glm::clamp(sprinting_ratio_ - (1* delta_t), 1., 2.);
 }
 
 /**
@@ -68,12 +78,21 @@ PlayerCyclist::PlayerCyclist() : Cyclist(), power_(1000)
 
 #ifndef NDEBUG
     #define POS
+    #define SPT_RATIO
 #ifdef POS
     add_draw_back( [&]() {
             std::ostringstream oss;
             oss.precision(5);
             oss << "x: " << pos_.x << " y: " << pos_.y;
             al_draw_text(debug_font(), al_map_rgb(255, 255, 255), 10, 10, ALLEGRO_ALIGN_LEFT, oss.str().c_str());
+            });
+#endif
+#ifdef SPT_RATIO
+    add_draw_back( [&]() {
+            std::ostringstream oss;
+            oss.precision(3);
+            oss << "SPT ratio: " << sprinting_ratio_;
+            al_draw_text(debug_font(), al_map_rgb(255, 255, 255), 10, 20, ALLEGRO_ALIGN_LEFT, oss.str().c_str());
             });
 #endif
 #endif
@@ -99,6 +118,26 @@ void PlayerCyclist::draw()
 }
 void PlayerCyclist::handle(const ALLEGRO_EVENT& event) 
 {
+    Object_split_aggregator::handle(event);
+    switch(event.type)
+    {
+        case ALLEGRO_EVENT_KEY_DOWN:
+            switch(event.keyboard.keycode)
+            {
+                case ALLEGRO_KEY_LCTRL:
+                    sprinting_ = true;
+                    break;
+            }
+            break;
+        case ALLEGRO_EVENT_KEY_UP:
+            switch(event.keyboard.keycode)
+            {
+                case ALLEGRO_KEY_LCTRL:
+                    sprinting_ = false;
+                    break;
+            }
+            break;
+    }
 }
 
 bool PlayerCyclist::alive()

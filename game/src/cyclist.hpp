@@ -31,10 +31,17 @@ public:
 
     virtual ~Cyclist();
 
+
 protected:
     glm::vec2 pos_{0., 0.};
     float speed_;
+    bool sprinting_;
+    float sprinting_ratio_;
+    
     std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter> sprite_;
+    
+    //protected fcts
+    void update_sprinting_ratio(double delta_t);
 };
 
 class PlayerCyclist : public Cyclist, public vivace::Object_split_aggregator {
