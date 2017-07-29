@@ -145,7 +145,7 @@ int main(void) {
 		main_loop.register_event_source(al_get_keyboard_event_source());
 		main_loop.run();
 	}
-	catch (std::exception ex) {
+	catch (const std::exception& ex) {
 		std::cerr << ex.what() << std::endl;
 	}
 	catch (int ex) {}
