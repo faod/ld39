@@ -74,7 +74,7 @@ public:
 
 	virtual void handle(const ALLEGRO_EVENT& event)
 	{
-		float vecval = 0.;
+//		float vecval = 0.;
 		switch (event.type) {
 		case ALLEGRO_EVENT_DISPLAY_CLOSE:
 			cerr << "Bye!" << endl;
