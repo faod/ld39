@@ -56,7 +56,7 @@ void Cyclist::update_sprinting_ratio(double delta_t)
     if (sprinting_)
         sprinting_ratio_ = glm::clamp(sprinting_ratio_ + (1 * delta_t), 1., 2.);
     else
-        sprinting_ratio_ = glm::clamp(sprinting_ratio_ - (1* delta_t), 1., 2.);
+        sprinting_ratio_ = glm::clamp(sprinting_ratio_ - (1 * delta_t), 1., 2.);
 }
 
 /**
@@ -104,7 +104,7 @@ PlayerCyclist::~PlayerCyclist()
 void PlayerCyclist::update(double delta_t)
 {
     Cyclist::update(delta_t);
-    power_ -= speed_ * 50. * delta_t;
+    power_ -= speed_ * 50. * sprinting_ratio_ * delta_t;
 
     if (power_ < 0) //LOST
     {
