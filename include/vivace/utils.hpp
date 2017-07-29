@@ -26,7 +26,7 @@ namespace vivace {
 void inline runtime_assert(bool test, const std::string& message)
 {
 	if (!test) {
-		throw new Vivace_Error(message);
+		throw Vivace_Error(message);
 	}
 }
 
