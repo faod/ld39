@@ -29,7 +29,8 @@ class track {
 public:
 	track(double **points, int points_len, double off_x, double off_y);
 
-	glm::dvec2 getPosition(double completion_percentage) const;
+	// (x, y, p)   p (Phi) = map rotation angle in rads
+	glm::dvec3 getPosition(double completion_percentage) const;
 	double get16pxPercentage();
 
 	std::vector<glm::dvec2> points;

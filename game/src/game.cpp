@@ -82,7 +82,7 @@ public:
                 450,   // destination y
                 6.,    // xscale
                 6.,    // yscale
-                0.,    // angle in rad
+                pos.p, // angle in rad
                 0      // flags (flip)
                 );
         //al_draw_filled_rectangle(pos.x - 5, pos.y - 5, pos.x + 5, pos.y + 5, al_map_rgb(255, 0, 128));

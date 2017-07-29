@@ -185,13 +185,26 @@ double track::get16pxPercentage()
 	return 1./(length/16.);
 }
 
-glm::dvec2 track::getPosition(double completion_percentage) const
+// Direction _MUST_ be normalized!
+static double compute_rotation(glm::dvec2 direction)
+{
+	glm::dvec2 orient(0, -1);
+	double angle = glm::acos(glm::dot(direction, orient));
+	return angle * (((direction.x * orient.y) >= 0)? 1: -1);
+}
+
+static glm::vec2 compute_direction(glm::dvec2 from, glm::vec2 to)
+{
+	return glm::normalize(glm::dvec2(to.x - from.x, to.y - from.y));
+}
+
+glm::dvec3 track::getPosition(double completion_percentage) const
 {
 	if (completion_percentage <= 0.) {
-		return points.front();
+		return glm::dvec3(points.at(0), compute_rotation(compute_direction(points.at(0), points.at(1))));
 	}
 	if (completion_percentage >= 1.) {
-		return points.back();
+		return glm::dvec3(points.back(), compute_rotation(compute_direction(points.at(points.size()-2), points.back())));
 	}
 
 	double real_length = completion_percentage * length;
@@ -204,10 +217,10 @@ glm::dvec2 track::getPosition(double completion_percentage) const
 			real_length -= dist;
 		}
 		else {
-			glm::dvec2 direction = glm::normalize(glm::dvec2(point.x - prev.x, point.y - prev.y));
-			return prev + (real_length * direction);
+			glm::dvec2 direction = compute_direction(prev, point);
+			return glm::dvec3(prev + (real_length * direction), compute_rotation(direction));
 		}
 	}
 
-	return points.back();
+	return glm::dvec3(points.back(), compute_rotation(compute_direction(points.at(points.size()-2), points.back())));
 }
