@@ -21,7 +21,7 @@
  * CYCLIST 
  *
  */
-Cyclist::Cyclist() : pos_(0.), speed_(0.01), sprinting_(false), sprinting_ratio_(1.)
+Cyclist::Cyclist() : pos_(0.), speed_(0.01), sprinting_(false), sprinting_ratio_(1.), track_(2)
 {
     sprite_ = std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter>(al_create_bitmap(32, 68));
     al_set_target_bitmap(sprite_.get());
@@ -42,7 +42,7 @@ void Cyclist::update(double delta_t)
 
 void Cyclist::draw()
 {
-    al_draw_bitmap(sprite_.get(), 380, 280 - pos_ * 100 , 0);
+    al_draw_bitmap(sprite_.get(), 380, 280, 0);
 }
 
 void Cyclist::handle(const ALLEGRO_EVENT& event)
@@ -79,6 +79,7 @@ PlayerCyclist::PlayerCyclist() : Cyclist(), power_(1000.)
 #ifndef NDEBUG
     #define POS
     #define SPT_RATIO
+    #define TRACK
 #ifdef POS
     add_draw_back( [&]() {
             std::ostringstream oss;
@@ -93,6 +94,13 @@ PlayerCyclist::PlayerCyclist() : Cyclist(), power_(1000.)
             oss.precision(3);
             oss << "SPT ratio: " << sprinting_ratio_;
             al_draw_text(debug_font(), al_map_rgb(255, 255, 255), 10, 20, ALLEGRO_ALIGN_LEFT, oss.str().c_str());
+            });
+#endif
+#ifdef TRACK
+    add_draw_back( [&]() {
+            std::ostringstream oss;
+            oss << "Track: " << track_;
+            al_draw_text(debug_font(), al_map_rgb(255, 255, 255), 10, 30, ALLEGRO_ALIGN_LEFT, oss.str().c_str());
             });
 #endif
 #endif

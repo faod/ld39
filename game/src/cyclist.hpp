@@ -37,6 +37,7 @@ protected:
     float speed_;
     bool sprinting_;
     float sprinting_ratio_;
+    int track_;
     
     std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter> sprite_;
     
