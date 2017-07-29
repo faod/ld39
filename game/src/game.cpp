@@ -88,7 +88,6 @@ void Game::draw()
             );
     //al_draw_filled_rectangle(pos.x - 5, pos.y - 5, pos.x + 5, pos.y + 5, al_map_rgb(255, 0, 128));
     //al_draw_bitmap(character.current().get(), 380+pos.x, 280-pos.y, 0);
-    Object_full_aggregator::draw();
     al_draw_scaled_rotated_bitmap(layer_.get(),
             pos.x, // center x
             pos.y, // center y
@@ -99,6 +98,7 @@ void Game::draw()
             pos.p, // angle in rad
             0      // flags (flip)
             );
+    Object_full_aggregator::draw();
  
     al_draw_text(debug_font(), al_map_rgb_f(1,1,1), 792, 8, ALLEGRO_ALIGN_RIGHT, fps_string.c_str());
     al_flip_display();
@@ -135,12 +135,7 @@ void Game::draw_food()
     al_clear_to_color(al_map_rgba(0, 0, 0, 0));
     for (auto& f : foods_)
     {
-        auto fp = level.tracks[f->get_track()].getPosition(f->get_pos());
-        al_draw_filled_rectangle(fp.x - 5,
-                                 fp.y - 5,
-                                 fp.x + 5,
-                                 fp.y + 5,
-                                 al_map_rgb(0, 0, 255));
+        f->draw();
     }
     al_set_target_bitmap(restore);
 }

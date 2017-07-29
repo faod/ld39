@@ -24,13 +24,15 @@
 class Food 
 {
 public:
-    Food(float pos, int track);
-    
-    float get_pos() const;
+    Food(glm::dvec3 pos, int track);
+   
+    void draw() const;
+
+    glm::dvec3 get_pos() const;
     int get_track() const;
 
 private:
-    float pos_;
+    glm::dvec3 pos_;
     int track_;
 };
 

@@ -16,6 +16,7 @@
 #define is_zero(x) (x < 1e-6 && x > -1e-6)
 
 #include "cyclist.hpp"
+#include "map.hpp"
 #include <sstream>
 /**
  *
@@ -24,10 +25,7 @@
  */
 Cyclist::Cyclist() : pos_(0.), speed_(0.01), sprinting_(false), sprinting_ratio_(1.), track_(2)
 {
-    sprite_ = std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter>(al_create_bitmap(10, 10));
-    al_set_target_bitmap(sprite_.get());
-    al_clear_to_color(al_map_rgb(255, 0, 255));
-    al_set_target_bitmap(al_get_backbuffer(al_get_current_display()));
+    sprite_ = std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter>(reinterpret_cast<ALLEGRO_BITMAP*>(al_img_loader("data/maillot_jaune.png")));
 }
 
 Cyclist::~Cyclist()
@@ -43,7 +41,16 @@ void Cyclist::update(double delta_t)
 
 void Cyclist::draw()
 {
-    al_draw_bitmap(sprite_.get(), 395, 445, 0);
+    al_draw_scaled_bitmap(sprite_.get(),
+                          0,
+                          0,
+                          11,
+                          29,
+                          400 - 33, 
+                          450 - 87,
+                          66, 
+                          174,
+                          0);
 }
 
 void Cyclist::handle(const ALLEGRO_EVENT& event)

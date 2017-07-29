@@ -24,6 +24,9 @@
 #include <memory>
 #include <vector>
 
+extern "C" {
+    void* al_img_loader(const char *path);
+}
 // Track (line where a cyclist ride)
 class track {
 public:

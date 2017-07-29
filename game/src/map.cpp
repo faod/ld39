@@ -23,7 +23,7 @@
 extern "C" {
 
 // Loads a bitmap and return pointer, used by TMX
-static void* al_img_loader(const char *path)
+void* al_img_loader(const char *path)
 {
 	ALLEGRO_BITMAP *res    = NULL;
 	ALLEGRO_PATH   *alpath = NULL;

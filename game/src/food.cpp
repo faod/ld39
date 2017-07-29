@@ -26,8 +26,13 @@
  * FOOD
  *
  */
-Food::Food(float pos, int track) : pos_(pos), track_(track)
+Food::Food(glm::dvec3 pos, int track) : pos_(pos), track_(track)
 {
+}
+
+void Food::draw() const
+{
+    al_draw_filled_rectangle(pos_.x - 5, pos_.y - 5, pos_.x + 5, pos_.y + 5, al_map_rgb(0, 0, 255));
 }
 
 int Food::get_track() const
@@ -35,7 +40,7 @@ int Food::get_track() const
     return track_;
 }
 
-float Food::get_pos() const
+glm::dvec3 Food::get_pos() const
 {
     return pos_;
 }
@@ -72,7 +77,7 @@ void FoodSpawner::spawn()
     auto& p = player_.get();
     const float pos = glm::linearRand(p.get_pos() + tsize, p.get_pos() + tsize * 8);
     assert(game_);
-    game_->spawn_food(std::make_unique<Food>(pos, track));
+    game_->spawn_food(std::make_unique<Food>(level_.get().tracks[track].getPosition(pos), track));
 }
 
 void FoodSpawner::set_game(Game* g)
