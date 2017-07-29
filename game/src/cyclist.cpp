@@ -112,6 +112,11 @@ PlayerCyclist::~PlayerCyclist()
 }
 void PlayerCyclist::update(double delta_t)
 {
+    if (pos_ > 1.) // WON
+    {
+        return;
+    }
+
     Cyclist::update(delta_t);
     update_track_change(delta_t);
     power_ -= 100. * sprinting_ratio_ * delta_t;
