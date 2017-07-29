@@ -49,9 +49,9 @@ public:
 	// Objects will be visited in the reverse order
 	virtual void add(Object& object);
 
-	virtual void update(double delta_t);
-	virtual void draw();
-	virtual void handle(const ALLEGRO_EVENT& event);
+	virtual void update(double delta_t) override;
+	virtual void draw() override;
+	virtual void handle(const ALLEGRO_EVENT& event) override;
 
 protected:
 	std::forward_list<std::reference_wrapper<Object>> objects;
@@ -63,9 +63,9 @@ public:
 	Object_split_aggregator() {};
 	Object_split_aggregator(Object_split_aggregator& v) = delete;
 
-	virtual void update(double delta_t);
-	virtual void draw();
-	virtual void handle(const ALLEGRO_EVENT& event);
+	virtual void update(double delta_t) override;
+	virtual void draw() override;
+	virtual void handle(const ALLEGRO_EVENT& event) override;
 
 	// Add a draw() function to a list
 	// At front (first visited) or at back (last visited)
@@ -86,11 +86,11 @@ class Object_full_aggregator: public Object_split_aggregator, public Object_aggr
 public:
     Object_full_aggregator() = default;
 
-    virtual void update(double delta_t);
-    virtual void draw();
-    virtual void handle(const ALLEGRO_EVENT& event);
+    virtual void update(double delta_t) override;
+    virtual void draw() override;
+    virtual void handle(const ALLEGRO_EVENT& event) override;
 
-    virtual void add(Object& object);
+    virtual void add(Object& object) override;
 };
 
 } // namespace vivace
