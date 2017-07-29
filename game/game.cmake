@@ -3,6 +3,7 @@ add_sources(
   src/game.cpp
   src/cyclist.cpp
   src/map.cpp
+  src/food.cpp
   src/tmx/tmx.c
   src/tmx/tmx_err.c
   src/tmx/tmx_hash.c

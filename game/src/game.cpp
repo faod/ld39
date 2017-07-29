@@ -16,6 +16,7 @@
 
 #include <vivace/vivace.hpp>
 #include "cyclist.hpp"
+#include "food.hpp"
 #include "map.hpp"
 using namespace vivace;
 
@@ -34,6 +35,7 @@ using namespace glm;
 class Game: public Object_full_aggregator {
 public:
 	Game():
+        foodspawner_(player_),
 		level("data/maps/01.tmx")
 	    //character(true)
 	{
@@ -45,6 +47,7 @@ public:
 		}
 		
         add(player_);
+        add_update(std::bind(&FoodSpawner::update, foodspawner_, std::placeholders::_1));
 	}
 
 	virtual void update(double delta_t)
@@ -70,7 +73,15 @@ public:
 	virtual void draw()
 	{
 		al_clear_to_color(bg_colour);
-		al_draw_bitmap(level.bitmap.get(), 0.f, 0.f, 0);
+		al_draw_scaled_rotated_bitmap(level.bitmap.get(),
+                                      0.f,
+                                      0.f,
+                                      1.,
+                                      1.,
+                                      2,
+                                      2,
+                                      0.,
+                                      0);
 		//al_draw_bitmap(character.current().get(), 380+pos.x, 280-pos.y, 0);
         Object_full_aggregator::draw();
 		al_draw_text(debug_font(), al_map_rgb_f(1,1,1), 792, 8, ALLEGRO_ALIGN_RIGHT, fps_string.c_str());
@@ -129,6 +140,7 @@ private:
 	//vec2 speed{0., 0.}; // in meter per seconds
 
     PlayerCyclist player_;
+    FoodSpawner foodspawner_;
 
 	map level;
 
