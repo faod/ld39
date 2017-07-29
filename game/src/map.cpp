@@ -176,3 +176,35 @@ track::track(double** points, int points_len, double off_x, double off_y)
 	std::cout << "length of track = " << length << std::endl;
 #endif
 }
+
+double track::get16pxPercentage()
+{
+	return 1./(length/16.);
+}
+
+glm::dvec2 track::getPosition(double completion_percentage) const
+{
+	if (completion_percentage <= 0.) {
+		return points.front();
+	}
+	if (completion_percentage >= 1.) {
+		return points.back();
+	}
+
+	double real_length = completion_percentage * length;
+
+	for (std::vector<glm::dvec2>::size_type it=1; it<points.size(); it++) {
+		const glm::dvec2 &point = points.at(it);
+		const glm::dvec2 &prev  = points.at(it - 1);
+		double dist = glm::distance<double>(point, prev);
+		if (dist < real_length) {
+			real_length -= dist;
+		}
+		else {
+			glm::dvec2 direction = glm::normalize(glm::dvec2(point.x - prev.x, point.y - prev.y));
+			return point + (dist * direction);
+		}
+	}
+
+	return points.back();
+}

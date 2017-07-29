@@ -22,11 +22,15 @@
 #include <glm/glm.hpp>
 
 #include <memory>
+#include <vector>
 
 // Track (line where a cyclist ride)
 class track {
 public:
 	track(double **points, int points_len, double off_x, double off_y);
+
+	glm::dvec2 getPosition(double completion_percentage) const;
+	double get16pxPercentage();
 
 	std::vector<glm::dvec2> points;
 	double length; // Sum of length of all segments
@@ -41,8 +45,6 @@ public:
 	// Creates a new instance, immediately loads and renders map at given location
 	// Throws a Vivace_error if cannot load/render map
 	map(const char *map_location);
-
-	const ALLEGRO_BITMAP* get_bitmap() const;
 
 	std::vector<track> tracks;
 	std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter> bitmap;
