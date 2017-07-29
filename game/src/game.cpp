@@ -36,7 +36,8 @@ using namespace glm;
 
 Game::Game():
 		level("data/maps/01.tmx"),
-        foodspawner_(player_, level)
+        foodspawner_(player_, level),
+        layer_(al_create_bitmap(level.width, level.height))
 {
     bg_colour = level.bg_color;
     //johnny = unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter>(al_load_bitmap("data/johnny_running.png"));
@@ -88,6 +89,17 @@ void Game::draw()
     //al_draw_filled_rectangle(pos.x - 5, pos.y - 5, pos.x + 5, pos.y + 5, al_map_rgb(255, 0, 128));
     //al_draw_bitmap(character.current().get(), 380+pos.x, 280-pos.y, 0);
     Object_full_aggregator::draw();
+    al_draw_scaled_rotated_bitmap(layer_.get(),
+            pos.x, // center x
+            pos.y, // center y
+            400,   // destination x
+            450,   // destination y
+            6.,    // xscale
+            6.,    // yscale
+            pos.p, // angle in rad
+            0      // flags (flip)
+            );
+ 
     al_draw_text(debug_font(), al_map_rgb_f(1,1,1), 792, 8, ALLEGRO_ALIGN_RIGHT, fps_string.c_str());
     al_flip_display();
 }
@@ -118,16 +130,19 @@ void Game::spawn_food(std::unique_ptr<Food>&& food)
 
 void Game::draw_food()
 {
-    auto pp = level.tracks[player_.get_track()].getPosition(player_.get_pos());
+    ALLEGRO_BITMAP *restore = al_get_target_bitmap();
+    al_set_target_bitmap(layer_.get());
+    al_clear_to_color(al_map_rgba(0, 0, 0, 0));
     for (auto& f : foods_)
     {
         auto fp = level.tracks[f->get_track()].getPosition(f->get_pos());
-        al_draw_filled_rectangle(400 - (pp.x - fp.x) * 6 - 5,
-                                 450 - (pp.y - fp.y) * 6 - 5,
-                                 400 - (pp.x - fp.x) * 6 + 5,
-                                 450 - (pp.y - fp.y) * 6 + 5,
+        al_draw_filled_rectangle(fp.x - 5,
+                                 fp.y - 5,
+                                 fp.x + 5,
+                                 fp.y + 5,
                                  al_map_rgb(0, 0, 255));
     }
+    al_set_target_bitmap(restore);
 }
 
 int main(void) {

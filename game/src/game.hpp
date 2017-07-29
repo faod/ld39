@@ -41,6 +41,7 @@ private:
     map level;
     FoodSpawner foodspawner_;
 
+    std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter> layer_;
     std::vector<std::unique_ptr<Food>> foods_;
 
     void mk_fps_string(double delta_t);
