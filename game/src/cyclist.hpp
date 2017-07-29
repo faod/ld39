@@ -33,7 +33,7 @@ public:
 
 
 protected:
-    glm::vec2 pos_{0., 0.};
+    float pos_;
     float speed_;
     bool sprinting_;
     float sprinting_ratio_;
@@ -56,7 +56,7 @@ public:
     bool alive();
 
 private:
-    int power_;
+    float power_;
     //Right now, a soft maxpower used to limit the drawing of power
     static const int maxpower = 1500;
 };

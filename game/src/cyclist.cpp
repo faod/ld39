@@ -21,7 +21,7 @@
  * CYCLIST 
  *
  */
-Cyclist::Cyclist() : speed_(1.), sprinting_(false), sprinting_ratio_(1.)
+Cyclist::Cyclist() : pos_(0.), speed_(0.01), sprinting_(false), sprinting_ratio_(1.)
 {
     sprite_ = std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter>(al_create_bitmap(32, 68));
     al_set_target_bitmap(sprite_.get());
@@ -37,12 +37,12 @@ void Cyclist::update(double delta_t)
 {
     //update cyclist movement
     update_sprinting_ratio(delta_t);
-    pos_.y += speed_ * 50. * sprinting_ratio_ * delta_t;
+    pos_ += speed_ * sprinting_ratio_ * delta_t;
 }
 
 void Cyclist::draw()
 {
-    al_draw_bitmap(sprite_.get(), 380 + pos_.x, 280 - pos_.y, 0);
+    al_draw_bitmap(sprite_.get(), 380, 280 - pos_ * 100 , 0);
 }
 
 void Cyclist::handle(const ALLEGRO_EVENT& event)
@@ -64,12 +64,12 @@ void Cyclist::update_sprinting_ratio(double delta_t)
  * PLAYER CYCLIST
  *
  */
-PlayerCyclist::PlayerCyclist() : Cyclist(), power_(1000)
+PlayerCyclist::PlayerCyclist() : Cyclist(), power_(1000.)
 {
     add_draw_back( [&]() {
             al_draw_rectangle(772, 150, 790, 500, al_map_rgb(0, 255, 0), 1.);
             
-            const int size = glm::clamp(power_, 0, maxpower) * 350 / maxpower;
+            const int size = glm::clamp(static_cast<int>(power_), 0, maxpower) * 350 / maxpower;
             al_draw_filled_rectangle(772, 500 - size, 790, 500, al_map_rgb(0, 240, 0));
             std::ostringstream oss;
             oss << power_ << " kcal";
@@ -83,7 +83,7 @@ PlayerCyclist::PlayerCyclist() : Cyclist(), power_(1000)
     add_draw_back( [&]() {
             std::ostringstream oss;
             oss.precision(5);
-            oss << "x: " << pos_.x << " y: " << pos_.y;
+            oss << "pos: " << pos_ * 100 << "%";
             al_draw_text(debug_font(), al_map_rgb(255, 255, 255), 10, 10, ALLEGRO_ALIGN_LEFT, oss.str().c_str());
             });
 #endif
@@ -104,7 +104,7 @@ PlayerCyclist::~PlayerCyclist()
 void PlayerCyclist::update(double delta_t)
 {
     Cyclist::update(delta_t);
-    power_ -= speed_ * 50. * sprinting_ratio_ * delta_t;
+    power_ -= 100. * sprinting_ratio_ * delta_t;
 
     if (power_ < 0) //LOST
     {
