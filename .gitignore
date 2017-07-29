@@ -1,4 +1,7 @@
 # Build folder
 build/
 
+# IDE files
+/nbproject/
+/.nbbuild/
 *.swp
