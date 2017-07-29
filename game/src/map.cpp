@@ -14,8 +14,6 @@
 	limitations under the License.
  */
 
-#include <vivace/vivace.hpp>
-
 #include "map.hpp"
 
 #include "tmx/tmx.h"
@@ -117,4 +115,35 @@ void map::initialize()
 
 map::map(const char* map_location)
 {
+	tmx_map *loaded_map = tmx_load(map_location);
+	vivace::runtime_assert(loaded_map, tmx_strerr());
+
+	width = loaded_map->width * loaded_map->tile_width;
+	height = loaded_map->height * loaded_map->tile_height;
+
+	// Render all graphic layers to a bitmap
+	bitmap = std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter>(al_create_bitmap(width, height));
+	ALLEGRO_BITMAP *restore = al_get_target_bitmap();
+	al_set_target_bitmap(bitmap.get());
+	draw_all_layers(loaded_map, loaded_map->ly_head);
+	al_set_target_bitmap(restore);
+
+	// Copy tracks
+	tmx_layer *obj_layer = loaded_map->ly_head->next;
+	vivace::runtime_assert(obj_layer->type == L_OBJGR, "second layer is not an objgr layer");
+	tmx_object *pos = obj_layer->content.objgr->head;
+	while (pos) {
+		vivace::runtime_assert(pos->obj_type == OT_POLYLINE, "object is not a polyline");
+		double **points = pos->content.shape->points;
+		std::vector<std::pair<double, double> > track(pos->content.shape->points_len);
+		for (int it=0; it<pos->content.shape->points_len; it++) {
+			double x, y;
+			x = pos->x + points[it][0];
+			y = pos->y + points[it][1];
+			track.push_back(std::pair<double, double>(x, y));
+		}
+		tracks.insert(tracks.begin(), track);
+	}
+
+	tmx_map_free(loaded_map);
 };

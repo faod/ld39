@@ -36,8 +36,9 @@ public:
 	const ALLEGRO_BITMAP* get_bitmap() const;
 
 private:
-	std::list<std::vector<std::pair<int, int>>> tracks;
+	std::vector<std::vector<std::pair<double, double>>> tracks;
 	std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter> bitmap;
+	unsigned int width, height;
 };
 
 #endif /* MAP_HPP */
