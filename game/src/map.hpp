@@ -19,9 +19,18 @@
 #pragma once
 
 #include <vivace/vivace.hpp>
+#include <glm/glm.hpp>
 
 #include <memory>
 
+// Track (line where a cyclist ride)
+class track {
+public:
+	track(double **points, int points_len, double off_x, double off_y);
+
+	std::vector<glm::dvec2> points;
+	double length; // Sum of length of all segments
+};
 
 // Loads and render a Tiled map (TMX) into an ALLEGRO_BITMAP
 class map {
@@ -35,10 +44,8 @@ public:
 
 	const ALLEGRO_BITMAP* get_bitmap() const;
 
-private:
-	std::vector<std::vector<std::pair<double, double>>> tracks;
+	std::vector<track> tracks;
 	std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter> bitmap;
 	unsigned int width, height;
 };
-
 #endif /* MAP_HPP */

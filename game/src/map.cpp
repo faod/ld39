@@ -14,6 +14,8 @@
 	limitations under the License.
  */
 
+#include <iostream>
+
 #include "map.hpp"
 
 #include "tmx/tmx.h"
@@ -134,16 +136,30 @@ map::map(const char* map_location)
 	tmx_object *pos = obj_layer->content.objgr->head;
 	while (pos) {
 		vivace::runtime_assert(pos->obj_type == OT_POLYLINE, "object is not a polyline");
-		double **points = pos->content.shape->points;
-		std::vector<std::pair<double, double> > track(pos->content.shape->points_len);
-		for (int it=0; it<pos->content.shape->points_len; it++) {
-			double x, y;
-			x = pos->x + points[it][0];
-			y = pos->y + points[it][1];
-			track.push_back(std::pair<double, double>(x, y));
-		}
-		tracks.insert(tracks.begin(), track);
+		track track_item(pos->content.shape->points, pos->content.shape->points_len, pos->x, pos->y);
+		tracks.insert(tracks.begin(), track_item);
 	}
 
 	tmx_map_free(loaded_map);
 };
+
+track::track(double** points, int points_len, double off_x, double off_y)
+{
+	for (int it=0; it<points_len; it++) {
+		double x, y;
+		x = off_x + points[it][0];
+		y = off_y + points[it][1];
+		this->points.push_back(glm::dvec2(x, y));
+	}
+
+	// Compute length
+	this->length = 0.;
+	for (int it=1; it<points_len; it++) {
+		glm::dvec2 &point = this->points.at(it);
+		glm::dvec2 &prev  = this->points.at(it - 1);
+		length += glm::distance<double>(point, prev);
+	}
+#ifndef NDEBUG
+	std::cout << "length of track = " << length << std::endl;
+#endif
+}
