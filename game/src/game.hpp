@@ -1,5 +1,5 @@
 /*
-    Copyright 2016 Jonathan Bayle, Thomas Medioni
+    Copyright 2017 Jonathan Bayle, Thomas Medioni
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -14,41 +14,37 @@
     limitations under the License.
 */
 
-#ifndef V_FOOD_HPP
-#define V_FOOD_HPP
+#ifndef V_GAME_HPP
+#define V_GAME_HPP
 #pragma once
 
+#include <vivace/object.hpp>
 #include "cyclist.hpp"
+#include "food.hpp"
 #include "map.hpp"
 
-class Food 
+class Game: public vivace::Object_full_aggregator
 {
 public:
-    Food(float pos, int track);
-    
-    float get_pos() const;
-    int get_track() const;
+	Game();
+	virtual void update(double delta_t) override;
+	virtual void draw() override;
+	virtual void handle(const ALLEGRO_EVENT& event) override;
 
+    void spawn_food(std::unique_ptr<Food>&& food);
 private:
-    float pos_;
-    int track_;
+    double sum_t = 0.;
+    std::string fps_string;
+    ALLEGRO_COLOR bg_colour;
+
+    PlayerCyclist player_;
+    map level;
+    FoodSpawner foodspawner_;
+
+    std::vector<std::unique_ptr<Food>> foods_;
+
+    void mk_fps_string(double delta_t);
+    void draw_food();
 };
 
-class Game;
-class FoodSpawner
-{
-public:
-    FoodSpawner(PlayerCyclist& player, map& level);
-    
-    void set_game(Game* g);
-    void update(double delta_t);
-private:
-    std::reference_wrapper<PlayerCyclist> player_;
-    std::reference_wrapper<map> level_;
-    Game* game_;
-
-    float time_to_spawn_;
-
-    void spawn();
-};
 #endif

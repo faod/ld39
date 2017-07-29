@@ -15,22 +15,29 @@
 */
 
 #include "food.hpp"
+#include "game.hpp"
 #include <functional>
 #include <glm/glm.hpp>
 #include <glm/gtc/random.hpp>
+#include <iostream>
+
 /**
  *
  * FOOD
  *
  */
-
-Food::Food()
+Food::Food(float pos, int track) : pos_(pos), track_(track)
 {
 }
 
-void Food::draw()
+int Food::get_track() const
 {
-    //TODO
+    return track_;
+}
+
+float Food::get_pos() const
+{
+    return pos_;
 }
 
 /**
@@ -39,7 +46,11 @@ void Food::draw()
  *
  */
 
-FoodSpawner::FoodSpawner(PlayerCyclist& player) : player_(player), time_to_spawn_(0.)
+FoodSpawner::FoodSpawner(PlayerCyclist& player, map& level) :
+                player_(player),
+                level_(level),
+                game_(nullptr),
+                time_to_spawn_(0.)
 {
 }
 
@@ -56,6 +67,15 @@ void FoodSpawner::spawn()
     time_to_spawn_ = glm::linearRand(5., 20.);
     
     // spawn one food
-    //const int track = glm::linearRand(0, 4);
+    const int track = glm::linearRand(0, 4);
+    const double tsize = level_.get().tracks[track].get16pxPercentage();
+    auto& p = player_.get();
+    const float pos = glm::linearRand(p.get_pos() + tsize, p.get_pos() + tsize * 8);
+    assert(game_);
+    game_->spawn_food(std::make_unique<Food>(pos, track));
+}
 
+void FoodSpawner::set_game(Game* g)
+{
+    game_ = g;
 }
