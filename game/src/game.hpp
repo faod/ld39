@@ -67,4 +67,15 @@ private:
     bool want_reload_;
 };
 
+// utilities.cpp
+
+void draw_scaled_ustr(const ALLEGRO_FONT *font, ALLEGRO_COLOR color,
+		float x, float y, float scale, int flags, const ALLEGRO_USTR *ustr);
+
+void draw_scaled_text(const ALLEGRO_FONT *font, ALLEGRO_COLOR color,
+		float x, float y, float scale, int flags, const char *text);
+
+void draw_scaled_string(const ALLEGRO_FONT *font, ALLEGRO_COLOR color,
+		float x, float y, float scale, int flags, const std::string str);
+
 #endif
