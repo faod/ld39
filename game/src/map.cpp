@@ -206,7 +206,7 @@ double track::get_16px_percentage()
 	return 1./(length/16.);
 }
 
-glm::dvec3 track::get_position(double completion_percentage) const
+glm::dvec3 track::get_position(track& reference, double completion_percentage) const
 {
 	if (completion_percentage <= 0.) {
 		return glm::dvec3(points.front(), map_rotation.front());
@@ -215,16 +215,22 @@ glm::dvec3 track::get_position(double completion_percentage) const
 		return glm::dvec3(points.back(), map_rotation.back());
 	}
 
-	double real_length = completion_percentage * length;
+	double real_length = completion_percentage * reference.length;
 
-	for (std::vector<double>::size_type it=0; it<distance_to_next.size(); it++) {
-		double dist = distance_to_next.at(it);
+	for (std::vector<double>::size_type it=0; it<reference.distance_to_next.size(); it++) {
+		double dist = reference.distance_to_next.at(it);
 		if (dist < real_length) {
 			real_length -= dist;
 		}
 		else {
 			glm::dvec2 point = points.at(it);
+			if (real_length < 1e-6)
+			{
+				return glm::dvec3(point, map_rotation.at(it));
+			}
+			double segment_completion = real_length / dist;
 			glm::dvec2 direction = direction_to_next.at(it);
+			real_length = segment_completion * distance_to_next.at(it);
 			return glm::dvec3(point + (real_length * direction), map_rotation.at(it));
 		}
 	}

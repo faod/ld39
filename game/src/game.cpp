@@ -77,7 +77,7 @@ void Game::draw()
 {
 	al_clear_to_color(bg_colour);
 
-    auto pos = level.tracks[player_.get_track()].get_position(player_.get_pos());
+    auto pos = level.tracks[player_.get_track()].get_position(level.tracks[2], player_.get_pos());
     al_draw_scaled_rotated_bitmap(level.bitmap.get(),
             pos.x, // center x
             pos.y, // center y
