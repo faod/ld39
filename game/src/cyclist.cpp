@@ -35,14 +35,14 @@ Cyclist::~Cyclist()
 {
 }
 
-void Cyclist::update(double delta_t)
+void Cyclist::update_impl(double delta_t)
 {
     //update cyclist movement
     update_sprinting_ratio(delta_t);
     pos_ += speed_ * sprinting_ratio_ * delta_t;
 }
 
-void Cyclist::draw()
+void Cyclist::draw_impl()
 {
     al_draw_scaled_bitmap(sprite_.get(),
                           0,
@@ -56,7 +56,7 @@ void Cyclist::draw()
                           0);
 }
 
-void Cyclist::handle(const ALLEGRO_EVENT& event)
+void Cyclist::handle_impl(const ALLEGRO_EVENT& event)
 {
     (void) event;
     //Handle events : void for bots
@@ -90,8 +90,9 @@ PlayerCyclist::PlayerCyclist(float forwardper16px) :
     power_(1000.), 
     track_change_time_(0.)
 {
+    using vivace::Drawable;
     speed_ = forwardper16px * 3;
-    add_draw_back( [&]() {
+    auto db_fct =  [&]() {
             al_draw_rectangle(772, 150, 790, 500, al_map_rgb(0, 255, 0), 1.);
             
             const int size = glm::clamp(static_cast<int>(power_), 0, maxpower) * 350 / maxpower;
@@ -99,34 +100,46 @@ PlayerCyclist::PlayerCyclist(float forwardper16px) :
             std::ostringstream oss;
             oss << power_ << " kcal";
             al_draw_text(debug_font(), al_map_rgb(0, 255, 0), 790, 130, ALLEGRO_ALIGN_RIGHT, oss.str().c_str());
-            });
+            };
+    auto db_object = std::make_unique<Drawable>(db_fct);
+    add(*db_object);
+    objects_.emplace_back(std::move(db_object));
 
 #ifndef NDEBUG
     #define POS
     #define SPT_RATIO
     #define TRACK
 #ifdef POS
-    add_draw_back( [&]() {
+    auto pos_fct = [&]() {
             std::ostringstream oss;
             oss.precision(5);
             oss << "pos: " << pos_ * 100 << "%";
             al_draw_text(debug_font(), al_map_rgb(255, 255, 255), 10, 10, ALLEGRO_ALIGN_LEFT, oss.str().c_str());
-            });
+            };
+    auto pos_object = std::make_unique<Drawable>(pos_fct);
+    add(*pos_object);
+    objects_.emplace_back(std::move(pos_object));
 #endif
 #ifdef SPT_RATIO
-    add_draw_back( [&]() {
+    auto spt_fct = [&]() {
             std::ostringstream oss;
             oss.precision(3);
             oss << "SPT ratio: " << sprinting_ratio_;
             al_draw_text(debug_font(), al_map_rgb(255, 255, 255), 10, 20, ALLEGRO_ALIGN_LEFT, oss.str().c_str());
-            });
+            };
+    auto spt_object = std::make_unique<Drawable>(spt_fct);
+    add(*spt_object);
+    objects_.emplace_back(std::move(spt_object));
 #endif
 #ifdef TRACK
-    add_draw_back( [&]() {
+    auto track_fct = [&]() {
             std::ostringstream oss;
             oss << "Track: " << track_;
             al_draw_text(debug_font(), al_map_rgb(255, 255, 255), 10, 30, ALLEGRO_ALIGN_LEFT, oss.str().c_str());
-            });
+            };
+    auto track_object = std::make_unique<Drawable>(track_fct);
+    add(*track_object);
+    objects_.emplace_back(std::move(track_object));
 #endif
 #endif
 }
@@ -134,14 +147,14 @@ PlayerCyclist::PlayerCyclist(float forwardper16px) :
 PlayerCyclist::~PlayerCyclist()
 {
 }
-void PlayerCyclist::update(double delta_t)
+void PlayerCyclist::update_impl(double delta_t)
 {
-    if (pos_ > 1.) // WON
+    if (pos_ >= 1. || power_ <= 0)
     {
         return;
     }
 
-    Cyclist::update(delta_t);
+    Cyclist::update_impl(delta_t);
     update_track_change(delta_t);
     power_ -= 100. * sprinting_ratio_ * delta_t;
 
@@ -150,14 +163,14 @@ void PlayerCyclist::update(double delta_t)
         power_ = 0;
     }
 }
-void PlayerCyclist::draw()
+void PlayerCyclist::draw_impl()
 {
-    Cyclist::draw();
-    Object_split_aggregator::draw();
+    Cyclist::draw_impl();
+    Object_aggregator::draw_impl();
 }
-void PlayerCyclist::handle(const ALLEGRO_EVENT& event) 
+void PlayerCyclist::handle_impl(const ALLEGRO_EVENT& event) 
 {
-    Object_split_aggregator::handle(event);
+    Object_aggregator::handle_impl(event);
     switch(event.type)
     {
         case ALLEGRO_EVENT_KEY_DOWN:
@@ -193,7 +206,7 @@ void PlayerCyclist::handle(const ALLEGRO_EVENT& event)
     }
 }
 
-bool PlayerCyclist::alive()
+bool PlayerCyclist::alive() const
 {
     return power_ > 0;
 }
@@ -205,6 +218,11 @@ void PlayerCyclist::update_track_change(float delta_t)
         track_ = new_track_;
     if (track_change_time_ < 0.)
         track_change_time_ = 0;
+}
+
+bool PlayerCyclist::finished() const
+{
+    return pos_ >= 1.; 
 }
 
 void PlayerCyclist::add_power(int amount)

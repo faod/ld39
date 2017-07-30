@@ -23,15 +23,16 @@
 #include "food.hpp"
 #include "map.hpp"
 
-class Game: public vivace::Object_full_aggregator
+class Game: public vivace::Object_aggregator
 {
 public:
 	Game();
-	virtual void update(double delta_t) override;
-	virtual void draw() override;
-	virtual void handle(const ALLEGRO_EVENT& event) override;
 
     void spawn_food(std::unique_ptr<Food>&& food);
+protected:
+	virtual void update_impl(double delta_t) override;
+	virtual void draw_impl() override;
+	virtual void handle_impl(const ALLEGRO_EVENT& event) override;
 private:
     double sum_t = 0.;
     std::string fps_string;
@@ -42,6 +43,8 @@ private:
     FoodSpawner foodspawner_;
 
     std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter> layer_;
+    
+    std::vector<std::unique_ptr<Object>> objects_;
     std::vector<std::unique_ptr<Food>> foods_;
 
     void mk_fps_string(double delta_t);

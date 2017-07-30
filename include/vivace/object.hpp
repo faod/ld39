@@ -31,12 +31,62 @@ class Object {
 public:
 	// Virtual dtor so Object can be properly overloaded
     virtual ~Object() = default;
+    Object();
+
+    bool activated() const;
+    void activate(bool activate);
+
+    void update(double delta_t);
+    void draw();
+    void handle(const ALLEGRO_EVENT& event);
+protected:
     // Update this object
-	virtual void update(double delta_t) = 0;
+	virtual void update_impl(double delta_t) = 0;
 	// Draw this object
-	virtual void draw() = 0;
+	virtual void draw_impl() = 0;
 	// Handle event (not a TIMER event)
-	virtual void handle(const ALLEGRO_EVENT& event) = 0;
+	virtual void handle_impl(const ALLEGRO_EVENT& event) = 0;
+private:
+    bool activated_;
+};
+
+// Can only draw a drawble
+class Drawable: public virtual Object 
+{
+public:
+    Drawable(std::function<void()> draw);
+
+private:
+    virtual void draw_impl() override;
+    virtual void update_impl(double delta_t) override;
+    virtual void handle_impl(const ALLEGRO_EVENT& event) override;
+    std::function<void()> draw_;
+};
+
+//Can only update
+class Updatable: public virtual Object
+{
+public:
+    Updatable(std::function<void(double)> update);
+
+private:
+    virtual void draw_impl() override;
+    virtual void update_impl(double delta_t) override;
+    virtual void handle_impl(const ALLEGRO_EVENT& event) override;
+    std::function<void(double)> update_;
+};
+
+//Can only capture events
+class Listener: public virtual Object
+{
+public:
+    Listener(std::function<void(const ALLEGRO_EVENT&)> listen);
+
+private:
+    virtual void draw_impl() override;
+    virtual void update_impl(double delta_t) override;
+    virtual void handle_impl(const ALLEGRO_EVENT& event) override;
+    std::function<void(const ALLEGRO_EVENT&)> listen_;
 };
 
 // An implementation that delegates to multiple instances
@@ -47,50 +97,15 @@ public:
 
 	// Add given object to a forward_list (insert at head)
 	// Objects will be visited in the reverse order
-	virtual void add(Object& object);
-
-	virtual void update(double delta_t) override;
-	virtual void draw() override;
-	virtual void handle(const ALLEGRO_EVENT& event) override;
-
+	void add(Object& object);
+    void remove(Object& object);
 protected:
-	std::forward_list<std::reference_wrapper<Object>> objects;
-};
+	virtual void update_impl(double delta_t) override;
+	virtual void draw_impl() override;
+	virtual void handle_impl(const ALLEGRO_EVENT& event) override;
 
-// Delegates to multiple functions
-class Object_split_aggregator: public virtual Object {
-public:
-	Object_split_aggregator() {};
-	Object_split_aggregator(Object_split_aggregator& v) = delete;
-
-	virtual void update(double delta_t) override;
-	virtual void draw() override;
-	virtual void handle(const ALLEGRO_EVENT& event) override;
-
-	// Add a draw() function to a list
-	// At front (first visited) or at back (last visited)
-	void add_draw_front(std::function<void()> draw_func);
-	void add_draw_back(std::function<void()> draw_func);
-	// Add an update() function to a forward_list
-	void add_update(std::function<void(double)> update_func);
-	// Add a handle() function to a forward_list
-	void add_handle(std::function<void(const ALLEGRO_EVENT&)> handle_func);
-
-protected:
-	std::list<std::function<void()>> draw_functions;
-	std::forward_list<std::function<void(double)>> update_functions;
-	std::forward_list<std::function<void(const ALLEGRO_EVENT&)>> handle_functions;
-};
-
-class Object_full_aggregator: public Object_split_aggregator, public Object_aggregator {
-public:
-    Object_full_aggregator() = default;
-
-    virtual void update(double delta_t) override;
-    virtual void draw() override;
-    virtual void handle(const ALLEGRO_EVENT& event) override;
-
-    virtual void add(Object& object) override;
+private:
+	std::list<std::reference_wrapper<Object>> objects;
 };
 
 } // namespace vivace

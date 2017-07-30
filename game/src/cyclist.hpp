@@ -21,13 +21,11 @@
 #include <vivace/object.hpp>
 #include <glm/glm.hpp>
 #include <memory>
+#include <vector>
 
 class Cyclist : public virtual vivace::Object {
 public:
     Cyclist(ALLEGRO_BITMAP* sp = nullptr);
-    virtual void update(double delta_t) override;
-    virtual void draw() override;
-    virtual void handle(const ALLEGRO_EVENT& event) override;
 
     virtual ~Cyclist();
 
@@ -35,6 +33,10 @@ public:
     int get_track();
 
 protected:
+    virtual void update_impl(double delta_t) override;
+    virtual void draw_impl() override;
+    virtual void handle_impl(const ALLEGRO_EVENT& event) override;
+
     float pos_;
     float speed_;
     bool sprinting_;
@@ -47,25 +49,27 @@ protected:
     void update_sprinting_ratio(double delta_t);
 };
 
-class PlayerCyclist : public Cyclist, public vivace::Object_split_aggregator {
+class PlayerCyclist : public Cyclist, public vivace::Object_aggregator {
 public:
     PlayerCyclist(float forwardper16px);
-    virtual void update(double delta_t) override;
-    virtual void draw() override;
-    virtual void handle(const ALLEGRO_EVENT& event) override;
 
     virtual ~PlayerCyclist();
 
-    bool alive();
+    bool alive() const;
+    bool finished() const;
     void add_power(int amount);
 
 private:
+    virtual void update_impl(double delta_t) override;
+    virtual void draw_impl() override;
+    virtual void handle_impl(const ALLEGRO_EVENT& event) override;
+    
     float power_;
     float track_change_time_;
     int new_track_;
     //Right now, a soft maxpower used to limit the drawing of power
     static const int maxpower = 1500;
-
+    std::vector<std::unique_ptr<Object>> objects_;
     void update_track_change(float delta_t);
 };
 #endif

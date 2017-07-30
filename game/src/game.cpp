@@ -48,22 +48,29 @@ Game::Game():
     }
     foodspawner_.set_game(this); 
     add(player_);
-    add_update(std::bind(&FoodSpawner::update, foodspawner_, std::placeholders::_1));
-    add_update(std::bind(&Game::update_food_pickup, this, std::placeholders::_1));
-    add_draw_back(std::bind(&Game::draw_food, this));
+
+    auto spawner_fct = std::bind(&FoodSpawner::update, foodspawner_, std::placeholders::_1);
+    auto spawner_object = std::make_unique<Updatable>(spawner_fct);
+    add(*spawner_object);
+    objects_.emplace_back(std::move(spawner_object));
+
+    auto pickup_fct = std::bind(&Game::update_food_pickup, this, std::placeholders::_1);
+    auto pickup_object = std::make_unique<Updatable>(pickup_fct);
+    add(*pickup_object);
+    objects_.emplace_back(std::move(pickup_object));
+
+    auto fooddraw_fct = std::bind(&Game::draw_food, this); 
+    auto fooddraw_object = std::make_unique<Drawable>(fooddraw_fct);
+    add(*fooddraw_object);
+    objects_.emplace_back(std::move(fooddraw_object));
 }
 
-void Game::update(double delta_t)
+void Game::update_impl(double delta_t)
 {
     if (delta_t >= 1.) {
         cerr << "lag!" << endl;
     }
-    else {
-        //pos.x += speed.x * 50. * delta_t;
-        //pos.y += speed.y * 50. * delta_t;
-    }
-    Object_full_aggregator::update(delta_t);
-    //character.update(delta_t);
+    Object_aggregator::update_impl(delta_t);
 
     sum_t += delta_t;
     if (sum_t >= 1.)
@@ -73,7 +80,7 @@ void Game::update(double delta_t)
     }
 }
 
-void Game::draw()
+void Game::draw_impl()
 {
 	al_clear_to_color(bg_colour);
 
@@ -100,13 +107,13 @@ void Game::draw()
             pos.p, // angle in rad
             0      // flags (flip)
             );
-    Object_full_aggregator::draw();
+    Object_aggregator::draw_impl();
  
     al_draw_text(debug_font(), al_map_rgb_f(1,1,1), 792, 8, ALLEGRO_ALIGN_RIGHT, fps_string.c_str());
     al_flip_display();
 }
 
-void Game::handle(const ALLEGRO_EVENT& event)
+void Game::handle_impl(const ALLEGRO_EVENT& event)
 {
     switch (event.type) {
     case ALLEGRO_EVENT_DISPLAY_CLOSE:
@@ -114,7 +121,7 @@ void Game::handle(const ALLEGRO_EVENT& event)
         throw 1;
 
     }
-    Object_full_aggregator::handle(event);
+    Object_aggregator::handle_impl(event);
 }
 
 void Game::mk_fps_string(double delta_t)
