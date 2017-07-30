@@ -9,19 +9,19 @@
   </data>
  </layer>
  <objectgroup name="tracks">
-  <object id="7" name="3" x="56" y="40">
+  <object id="7" name="1" x="56" y="8">
    <polyline points="0,0 48,0 96,48 192,48 240,0 336,0"/>
   </object>
-  <object id="8" name="1" x="56" y="8">
+  <object id="8" name="2" x="56" y="24">
    <polyline points="0,0 48,0 96,48 192,48 240,0 336,0"/>
   </object>
-  <object id="9" name="5" x="56" y="72">
+  <object id="9" name="3" x="56" y="40">
    <polyline points="0,0 48,0 96,48 192,48 240,0 336,0"/>
   </object>
-  <object id="10" name="2" x="56" y="24">
+  <object id="10" name="4" x="56" y="56">
    <polyline points="0,0 48,0 96,48 192,48 240,0 336,0"/>
   </object>
-  <object id="11" name="4" x="56" y="56">
+  <object id="11" name="5" x="56" y="72">
    <polyline points="0,0 48,0 96,48 192,48 240,0 336,0"/>
   </object>
  </objectgroup>
