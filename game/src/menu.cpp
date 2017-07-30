@@ -17,19 +17,18 @@
 #include "menu.hpp"
 #include "game.hpp"
 Menu::Menu() : menu_(al_create_bitmap(800, 600)),
-               cursor_(0),
-               choices_({"PLAY", "QUIT"}),
-               game_(nullptr)
+               cursor_(0)
 {
-}
-void Menu::set_game(Game* g)
-{
-    game_ = g;
 }
 
 void Menu::update_impl(double delta_t)
 {
     (void) delta_t;
+}
+
+void Menu::add_entry(std::string display, std::function<void()> on_select)
+{
+    choices_.push_back(std::make_pair(display, on_select));
 }
 
 void Menu::draw_impl() 
@@ -40,7 +39,7 @@ void Menu::draw_impl()
 
     for (unsigned i = 0; i < choices_.size(); ++i)
     {
-        auto&s = choices_[i];
+        auto&s = choices_[i].first;
         auto color = cursor_ == i ? al_map_rgb(0, 0, 255) : al_map_rgb(255, 0, 0);
         al_draw_text(debug_font(), color, 400, 200 + 20 * i, ALLEGRO_ALIGN_CENTRE, s.c_str());
     }
@@ -72,15 +71,5 @@ void Menu::handle_impl(const ALLEGRO_EVENT& event)
 
 void Menu::select()
 {
-    switch(cursor_)
-    {
-        case 0: //PLAY
-            activate(false);
-            assert(game_);
-            game_->load_game();
-            break;
-        case 1: //QUIT
-            throw 1;
-            break;
-    }
+    choices_[cursor_].second();
 }

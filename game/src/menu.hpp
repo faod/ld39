@@ -22,13 +22,14 @@
 #include <vivace/object.hpp>
 #include <memory>
 #include <vector>
+#include <string>
 
 class Game;
-class Menu : public virtual vivace::Object
+class Menu : public virtual vivace::Object_aggregator
 {
 public:
     Menu();
-    void set_game(Game* g);
+    void add_entry(std::string display, std::function<void()> on_select);
 private:
     virtual void update_impl(double delta_t) override;
     virtual void draw_impl() override;
@@ -38,7 +39,7 @@ private:
 
     std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter> menu_;
     unsigned cursor_;
-    std::vector<std::string> choices_;
-    Game* game_;
+    std::vector<std::pair<std::string, std::function<void()>>> choices_;
+    std::unique_ptr<Menu> submenu_;
 };
 #endif

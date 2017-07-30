@@ -38,7 +38,12 @@ Game::Game() : want_menu_(false), want_reload_(false)
 {
     bg_colour = al_map_rgb(0, 0, 40);
     add(menu_);
-    menu_.set_game(this);
+    
+    menu_.add_entry("PLAY", [&]() {
+            menu_.activate(false);
+            this->load_game();
+            });
+    menu_.add_entry("QUIT", [&]() { throw 1;});
 
     gameover_ = std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter>(reinterpret_cast<ALLEGRO_BITMAP*>(al_img_loader("data/gameover.png")));
 }
