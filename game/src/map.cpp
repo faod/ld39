@@ -195,6 +195,9 @@ track::track(double** points, int points_len, double off_x, double off_y)
 		direction_to_next.push_back(dir);
 
 		map_rotation.push_back(compute_rotation(dir));
+#ifndef NDEBUG
+		std::cout << "segment [" << it-1 << ", " << it << "] length=" << distance_to_next[it-1] << " map rotation=" << map_rotation[it-1] << std::endl;
+#endif
 	}
 #ifndef NDEBUG
 	std::cout << "length of track = " << length << std::endl;
@@ -204,6 +207,39 @@ track::track(double** points, int points_len, double off_x, double off_y)
 double track::get_16px_percentage()
 {
 	return 1./(length/16.);
+}
+
+// returns 0.0 at next-16px to next, 0.5 at next, 0.5 at previous, 1.0 at previous+16px
+static double compute_proximity_ratio(glm::dvec2 pos, glm::dvec2 prev_point, glm::dvec2 next_point)
+{
+	double dist_to_next   = glm::distance(pos, next_point);
+	double dist_from_prev = glm::distance(prev_point, pos);
+	if (dist_to_next <= 16) {
+		return 0.5 - dist_to_next/32.;
+	}
+	if (dist_from_prev <= 16) {
+		return 0.5 + dist_from_prev/32.;
+	}
+	return 1.;
+}
+
+#define PI 3.141592653589793
+
+// to smooth rotation according to the proximity ratio
+// prev_angle must be the map rotation engle of the segment BEFORE the proximal point
+// next_angle must be the map rotation engle of the segment AFTER  the proximal point
+static double apply_proximity_ratio(double prox_ratio, double prev_angle, double next_angle)
+{
+	double rotation = (next_angle - prev_angle);
+	if (rotation > PI)
+	{
+		rotation = PI - rotation;
+	}
+	if (rotation < -PI)
+	{
+		rotation = -rotation - PI;
+	}
+	return prev_angle + prox_ratio * rotation;
 }
 
 glm::dvec3 track::get_position(track& reference, double completion_percentage) const
@@ -217,21 +253,38 @@ glm::dvec3 track::get_position(track& reference, double completion_percentage) c
 
 	double real_length = completion_percentage * reference.length;
 
-	for (std::vector<double>::size_type it=0; it<reference.distance_to_next.size(); it++) {
-		double dist = reference.distance_to_next.at(it);
+	std::vector<double>::size_type last = reference.distance_to_next.size() - 1;
+	for (std::vector<double>::size_type it=0; it<=last; it++) {
+		double dist = reference.distance_to_next[it];
 		if (dist < real_length) {
 			real_length -= dist;
 		}
 		else {
-			glm::dvec2 point = points.at(it);
+			glm::dvec2 point = points[it];
 			if (real_length < 1e-6)
 			{
-				return glm::dvec3(point, map_rotation.at(it));
+				if (it == 0 || it == last) {
+					return glm::dvec3(point, map_rotation[it]);
+				}
+				// Smooth angle
+				double angle = apply_proximity_ratio(0.5, map_rotation[it-1], map_rotation[it]);
+				return glm::dvec3(point, angle);
 			}
-			double segment_completion = real_length / dist;
-			glm::dvec2 direction = direction_to_next.at(it);
-			real_length = segment_completion * distance_to_next.at(it);
-			return glm::dvec3(point + (real_length * direction), map_rotation.at(it));
+			double segment_completion = real_length / dist; // percentage of completion of current segment on reference track
+			glm::dvec2 direction = direction_to_next[it];
+			real_length = segment_completion * distance_to_next[it]; // apply %age of completion to same segment on this track
+			glm::dvec2 position = point + (real_length * direction);
+
+			// Smooth angle
+			double angle = map_rotation[it];
+			double prox_ratio = compute_proximity_ratio(position, point, points[it+1]);
+			if (it < last && prox_ratio > 0. && prox_ratio < 0.5) {
+				angle = apply_proximity_ratio(prox_ratio, map_rotation[it], map_rotation[it+1]);
+			}
+			else if (it > 0 && prox_ratio < 1. && prox_ratio >= 0.5) {
+				angle = apply_proximity_ratio(prox_ratio, map_rotation[it-1], map_rotation[it]);
+			}
+			return glm::dvec3(position, angle);
 		}
 	}
 
