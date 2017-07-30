@@ -138,6 +138,11 @@ void Game::update_impl(double delta_t)
         game_over();
     }
 
+    if (player_ && player_->activated() && player_->finished())
+    {
+        game_won();
+    }
+
     sum_t += delta_t;
     if (sum_t >= 1.)
     {
@@ -261,6 +266,47 @@ void Game::game_over()
     add(*gameover_object);
     objects_.emplace_back(std::move(gameover_object));
 }
+
+void Game::game_won()
+{
+    disable_all();
+    auto drawmap_fct = [&]() {
+        al_clear_to_color(al_map_rgb(0, 255, 255));
+        /*al_draw_bitmap(gameover_.get(),
+            400 - 77,   // destination x
+            600 - 203,   // destination y
+            0      // flags (flip)
+            );
+            */
+        al_draw_text(debug_font(), al_map_rgb(255, 0, 0), 400, 300, ALLEGRO_ALIGN_CENTRE, "VICTORY");
+        al_draw_text(debug_font(), al_map_rgb(255, 255, 0), 400, 400, ALLEGRO_ALIGN_CENTRE, "[R]un Again - Space to Main Menu");
+        };
+    auto drawmap_object = std::make_unique<Drawable>(drawmap_fct);
+    add(*drawmap_object);
+    objects_.emplace_back(std::move(drawmap_object));
+
+    auto gamewon_fct = [&](const ALLEGRO_EVENT& event){
+        switch(event.type)
+        {
+            case ALLEGRO_EVENT_KEY_DOWN:
+                switch(event.keyboard.keycode)
+                {
+                    case ALLEGRO_KEY_R:
+                        disable_all();
+                        want_reload_ = true;
+                    break;
+                    case ALLEGRO_KEY_SPACE:
+                        disable_all();
+                        want_menu_ = true;;
+                    break;
+                }
+            break;
+        }
+    };
+    auto gamewon_object = std::make_unique<Listener>(gamewon_fct);
+    add(*gamewon_object);
+    objects_.emplace_back(std::move(gamewon_object));
+} 
 
 int main(void) {
 	try {

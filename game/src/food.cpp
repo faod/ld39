@@ -92,7 +92,7 @@ void FoodSpawner::update(double delta_t)
 
 void FoodSpawner::spawn()
 {
-    time_to_spawn_ = glm::linearRand(3., 12.);
+    time_to_spawn_ = glm::linearRand(3., 8.);
     
     // spawn one food
     const int track = glm::linearRand(0, 4);

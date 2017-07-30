@@ -47,6 +47,7 @@ private:
 
     std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter> layer_;
     std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter> gameover_;
+    std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter> gamewon_;
 
     std::vector<std::unique_ptr<Object>> objects_;
     std::vector<std::unique_ptr<Food>> foods_;
@@ -57,6 +58,7 @@ private:
     void draw_food();
     void update_food_pickup(double delta_t);
     void game_over();
+    void game_won();
     void disable_all();
     bool want_menu_;
     bool want_reload_;
