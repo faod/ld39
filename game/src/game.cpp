@@ -58,8 +58,9 @@ Game::Game() : want_menu_(false), want_reload_(false)
 		backup->set_bg_col(al_map_rgb(215, 123, 186));
 		pause_.set_background(menubg_, 2.f, 2.f);
 		pause_.set_bg_col(al_map_rgb(215, 123, 186));
-		
 	}
+
+	gamewon_ = std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter>(reinterpret_cast<ALLEGRO_BITMAP*>(al_img_loader("data/victory.png")));
 }
 
 void Game::load_game(std::string map_name)
@@ -306,12 +307,12 @@ void Game::game_won()
     disable_all();
     auto drawmap_fct = [&]() {
         al_clear_to_color(al_map_rgb(0, 255, 255));
-        /*al_draw_bitmap(gameover_.get(),
-            400 - 77,   // destination x
-            600 - 203,   // destination y
-            0      // flags (flip)
-            );
-            */
+        al_draw_scaled_bitmap(gamewon_.get(),
+				0, 0,
+				219, 226,
+				181, 144,
+				438, 456,
+				0);
         al_draw_text(debug_font(), al_map_rgb(255, 0, 0), 400, 300, ALLEGRO_ALIGN_CENTRE, "VICTORY");
         al_draw_text(debug_font(), al_map_rgb(255, 255, 0), 400, 400, ALLEGRO_ALIGN_CENTRE, "[R]un Again - Space to Main Menu");
         };
