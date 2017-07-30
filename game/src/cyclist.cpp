@@ -23,7 +23,7 @@
  * CYCLIST 
  *
  */
-Cyclist::Cyclist(ALLEGRO_BITMAP* sp) : pos_(0.), speed_(0.01), sprinting_(false), sprinting_ratio_(1.), track_(2)
+Cyclist::Cyclist(float forwardp16px, ALLEGRO_BITMAP* sp) : pos_(0.), speed_(forwardp16px * 2), sprinting_(false), sprinting_ratio_(1.), track_(2)
 {
     if (!sp)
         sp = reinterpret_cast<ALLEGRO_BITMAP*>(al_img_loader("data/maillot_blend.png"));
@@ -44,16 +44,6 @@ void Cyclist::update_impl(double delta_t)
 
 void Cyclist::draw_impl()
 {
-    al_draw_scaled_bitmap(sprite_.get(),
-                          0,
-                          0,
-                          11,
-                          29,
-                          400 - 33, 
-                          450 - 87,
-                          66, 
-                          174,
-                          0);
 }
 
 void Cyclist::handle_impl(const ALLEGRO_EVENT& event)
@@ -86,12 +76,11 @@ float Cyclist::get_pos()
  *
  */
 PlayerCyclist::PlayerCyclist(float forwardper16px) : 
-    Cyclist(reinterpret_cast<ALLEGRO_BITMAP*>(al_img_loader("data/maillot_jaune.png"))), 
+    Cyclist(forwardper16px * 1.5, reinterpret_cast<ALLEGRO_BITMAP*>(al_img_loader("data/maillot_jaune.png"))), 
     power_(1000.), 
     track_change_time_(0.)
 {
     using vivace::Drawable;
-    speed_ = forwardper16px * 3;
     auto db_fct =  [&]() {
             al_draw_rectangle(772, 150, 790, 500, al_map_rgb(0, 255, 0), 1.);
             
@@ -165,7 +154,16 @@ void PlayerCyclist::update_impl(double delta_t)
 }
 void PlayerCyclist::draw_impl()
 {
-    Cyclist::draw_impl();
+    al_draw_scaled_bitmap(sprite_.get(),
+                          0,
+                          0,
+                          11,
+                          29,
+                          400 - 33, 
+                          450 - 87,
+                          66, 
+                          174,
+                          0);
     Object_aggregator::draw_impl();
 }
 void PlayerCyclist::handle_impl(const ALLEGRO_EVENT& event) 

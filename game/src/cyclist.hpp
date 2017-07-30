@@ -25,7 +25,7 @@
 
 class Cyclist : public virtual vivace::Object {
 public:
-    Cyclist(ALLEGRO_BITMAP* sp = nullptr);
+    Cyclist(float forwardp16px, ALLEGRO_BITMAP* sp = nullptr);
 
     virtual ~Cyclist();
 
