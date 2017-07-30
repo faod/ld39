@@ -20,6 +20,7 @@
 
 #include <vivace/object.hpp>
 #include <memory>
+#include <vector>
 
 class Menu : public virtual vivace::Object
 {
@@ -31,7 +32,11 @@ private:
     virtual void draw_impl() override;
     virtual void handle_impl(const ALLEGRO_EVENT& event) override;
 
+    void select();
+
     std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter> menu_;
-    int cursor_;
+    
+    unsigned cursor_;
+    std::vector<std::string> choices_;
 };
 #endif

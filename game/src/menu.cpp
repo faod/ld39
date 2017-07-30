@@ -17,7 +17,8 @@
 #include "menu.hpp"
 
 Menu::Menu() : menu_(al_create_bitmap(800, 600)),
-               cursor_(0)
+               cursor_(0),
+               choices_({"PLAY", "QUIT"})
 {
 }
 
@@ -32,7 +33,12 @@ void Menu::draw_impl()
     al_set_target_bitmap(menu_.get());
     al_clear_to_color(al_map_rgb(0, 240, 0));
 
-    al_draw_text(debug_font(), al_map_rgb(255, 0, 0), 400, 200, ALLEGRO_ALIGN_CENTRE, "PLAY");
+    for (unsigned i = 0; i < choices_.size(); ++i)
+    {
+        auto&s = choices_[i];
+        auto color = cursor_ == i ? al_map_rgb(0, 0, 255) : al_map_rgb(255, 0, 0);
+        al_draw_text(debug_font(), color, 400, 200 + 20 * i, ALLEGRO_ALIGN_CENTRE, s.c_str());
+    }
 
     al_set_target_bitmap(restore);
     al_draw_bitmap(menu_.get(), 0, 0, 0);
@@ -40,5 +46,33 @@ void Menu::draw_impl()
 
 void Menu::handle_impl(const ALLEGRO_EVENT& event)
 {
-    (void) event;
+    switch (event.type)
+    {
+        case ALLEGRO_EVENT_KEY_DOWN:
+            switch (event.keyboard.keycode)
+            {
+                case ALLEGRO_KEY_DOWN:
+                    cursor_ = cursor_ < choices_.size() - 1 ? cursor_ + 1 : 0;
+                    break;
+                case ALLEGRO_KEY_UP:
+                    cursor_ = cursor_ > 0 ? cursor_ - 1 : choices_.size() - 1;
+                    break;
+                case ALLEGRO_KEY_SPACE:
+                    select();
+                    break;
+            }
+            break;
+    }
+}
+
+void Menu::select()
+{
+    switch(cursor_)
+    {
+        case 0: //PLAY
+            break;
+        case 1: //QUIT
+            throw 1;
+            break;
+    }
 }
