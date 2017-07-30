@@ -110,9 +110,8 @@ void Game::load_game(std::string map_name)
 
     foodspawner_ = std::make_unique<FoodSpawner>(*player_, *level_);
     foodspawner_->set_game(this); 
-    
-    if (!layer_)
-        layer_.reset(al_create_bitmap(level_->width, level_->height));
+
+	layer_.reset(al_create_bitmap(level_->width, level_->height));
 
     bg_colour = level_->bg_color;
 

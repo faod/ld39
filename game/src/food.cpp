@@ -42,6 +42,9 @@ Food::Food(glm::dvec3 pos, float fpos, int track, int power) : pos_(pos), fpos_(
 
 void Food::draw(double angle) const
 {
+#ifndef NDEBUG
+	al_draw_rectangle(pos_.x-8, pos_.y-8, pos_.x+8, pos_.y+8, al_map_rgb(255, 0, 0), 1.);
+#endif
 	al_draw_rotated_bitmap(sprite_.get(),
 			8,      8,
 			pos_.x, pos_.y,
@@ -101,7 +104,9 @@ void FoodSpawner::spawn()
     const float pos = glm::linearRand(p.get_pos() + tsize * 3, p.get_pos() + tsize * 8);
     const int power = glm::linearRand(300, 1500);
     assert(game_);
-    game_->spawn_food(std::make_unique<Food>(level_.get().tracks[track].get_position(level_.get().tracks[2], pos), pos, track, power));
+	glm::dvec3 pos2d = level_.get().tracks[track].get_position(level_.get().tracks[2], pos);
+	std::cout << "Spawn food at (" << pos2d.x << ", " << pos2d.y << ')' << std::endl;
+    game_->spawn_food(std::make_unique<Food>(pos2d, pos, track, power));
 }
 
 void FoodSpawner::set_game(Game* g)
