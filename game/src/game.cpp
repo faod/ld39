@@ -54,10 +54,13 @@ Game::Game() : want_menu_(false), want_reload_(false)
 	if (menubg_.get()) {
 		menu_.set_background(menubg_, 2.f, 2.f);
 		menu_.set_bg_col(al_map_rgb(215, 123, 186));
+		menu_.set_entry_settings(500.f, 360.f, 2.f);
 		backup->set_background(menubg_, 2.f, 2.f);
 		backup->set_bg_col(al_map_rgb(215, 123, 186));
+		backup->set_entry_settings(500.f, 360.f, 2.f);
 		pause_.set_background(menubg_, 2.f, 2.f);
 		pause_.set_bg_col(al_map_rgb(215, 123, 186));
+		pause_.set_entry_settings(500.f, 360.f, 2.f);
 	}
 
 	gamewon_ = std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter>(reinterpret_cast<ALLEGRO_BITMAP*>(al_img_loader("data/victory.png")));

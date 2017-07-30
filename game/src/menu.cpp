@@ -19,7 +19,8 @@
 #include "vivace/base.hpp"
 #include "vivace/utils.hpp"
 #include <algorithm>
-Menu::Menu(Menu* parent) : bg_color(al_map_rgb(0, 0, 0)),
+Menu::Menu(Menu* parent) : off_x(400.f), off_y(300.f), scale(2.f),
+               bg_color(al_map_rgb(0, 0, 0)),
                menu_(al_create_bitmap(800, 600)),
                cursor_(0),
                cursor_activate_(false),
@@ -66,6 +67,13 @@ void Menu::sub_opened(bool op)
     sub_opened_ = op;
 }
 
+void Menu::set_entry_settings(float offset_x, float offset_y, float scale)
+{
+	off_x = offset_x;
+	off_y = offset_y;
+	this->scale = scale;
+}
+
 void Menu::set_background(std::shared_ptr<ALLEGRO_BITMAP> bg, float scale_x, float scale_y)
 {
 	vivace::runtime_assert(bg.get(), "Cannot set NULL background to menu");
@@ -93,11 +101,11 @@ void Menu::draw_impl()
         if (cursor_ == i) {
 			al_draw_scaled_rotated_bitmap(cursor_bmp,
 			    8.5f, 11.f,
-			    370, 205 + 40 * i,
+			    off_x-30, off_y+5 + 40 * i,
 			    2.f, 2.f,
 			    1.57f, 0);
 		}
-        draw_scaled_string(debug_font(), al_map_rgb(255, 255, 255), 400, 200 + 40 * i, 2.f, 0, s);
+        draw_scaled_string(debug_font(), al_map_rgb(255, 255, 255), off_x, off_y + 40 * i, scale, 0, s);
     }
 
     al_set_target_bitmap(restore);
@@ -188,10 +196,12 @@ std::unique_ptr<Menu> make_map_selection_menu(Game* g, Menu* parent)
     std::sort(entries.begin(), entries.end());
     for (auto& s : entries)
     {
+		std::string entry_name = s.substr(s.length()-6, 2);
         auto n = m.get();
-        m->add_entry(s, [s, g, n](){ n->disable_parent();
-                                     n->escape();
-                                     g->load_game(s);});
+        m->add_entry(entry_name,
+		             [s, g, n](){ n->disable_parent();
+                                  n->escape();
+                                  g->load_game(s);});
     }
     m->activate(false);
     return m;
