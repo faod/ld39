@@ -56,6 +56,7 @@ public:
 	// Throws a Vivace_error if cannot load/render map
 	map(const char *map_location);
 
+    std::string location_;
 	std::vector<track> tracks;
 	std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter> bitmap;
 	unsigned int width, height;

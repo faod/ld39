@@ -30,7 +30,7 @@ public:
 	Game();
 
     void spawn_food(std::unique_ptr<Food>&& food);
-    void load_game();
+    void load_game(std::string map);
 
     protected:
 	virtual void update_impl(double delta_t) override;

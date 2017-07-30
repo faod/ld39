@@ -126,7 +126,7 @@ void map::initialize()
 	tmx_img_free_func = (void (*)(void*))al_destroy_bitmap;
 }
 
-map::map(const char* map_location)
+map::map(const char* map_location) : location_(map_location)
 {
 	tmx_map *loaded_map = tmx_load(map_location);
 	vivace::runtime_assert(loaded_map, tmx_strerr());

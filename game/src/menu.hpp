@@ -28,18 +28,25 @@ class Game;
 class Menu : public virtual vivace::Object_aggregator
 {
 public:
-    Menu();
+    Menu(Menu* parent = nullptr);
     void add_entry(std::string display, std::function<void()> on_select);
+    void add_entry(std::string display, std::unique_ptr<Menu>&& submenu);
+    void escape();
+    void sub_opened(bool);
 private:
     virtual void update_impl(double delta_t) override;
     virtual void draw_impl() override;
     virtual void handle_impl(const ALLEGRO_EVENT& event) override;
 
     void select();
-
+    
     std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter> menu_;
     unsigned cursor_;
-    std::vector<std::pair<std::string, std::function<void()>>> choices_;
-    std::unique_ptr<Menu> submenu_;
+    bool cursor_activate_;
+    std::vector<std::tuple<std::string, std::function<void()>, std::unique_ptr<Menu>>> choices_;
+    bool sub_opened_;
+    Menu* parent_;
 };
+
+std::unique_ptr<Menu> make_map_selection_menu(Game* g, Menu* parent);
 #endif
