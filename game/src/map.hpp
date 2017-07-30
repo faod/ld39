@@ -24,20 +24,26 @@
 #include <memory>
 #include <vector>
 
+// Loads bitmap (C calling convention because it is a callback used by C code)
+// ALLEGRO_BITMAP *bmp = reinterpret_cast<ALLEGRO_BITMAP*>(al_img_loader(...));
 extern "C" {
     void* al_img_loader(const char *path);
 }
+
 // Track (line where a cyclist ride)
 class track {
 public:
 	track(double **points, int points_len, double off_x, double off_y);
 
 	// (x, y, p)   p (Phi) = map rotation angle in rads
-	glm::dvec3 getPosition(double completion_percentage) const;
-	double get16pxPercentage();
+	glm::dvec3 get_position(double completion_percentage) const;
+	double get_16px_percentage();
 
 	std::vector<glm::dvec2> points;
-	double length; // Sum of length of all segments
+	std::vector<double> distance_to_next;
+	std::vector<glm::dvec2> direction_to_next;
+	std::vector<double> map_rotation;
+	double length; // Sum of length of all segments (E(distance_to_next))
 };
 
 // Loads and render a Tiled map (TMX) into an ALLEGRO_BITMAP

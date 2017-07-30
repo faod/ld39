@@ -156,35 +156,6 @@ map::map(const char* map_location)
 	tmx_map_free(loaded_map);
 };
 
-track::track(double** points, int points_len, double off_x, double off_y)
-{
-	for (int it=0; it<points_len; it++) {
-		double x, y;
-		x = off_x + points[it][0];
-		y = off_y + points[it][1];
-#ifndef NDEBUG
-		std::cout << "tracks point " << it+1 << " (x, y) = " << x << ", " << y << std::endl;
-#endif
-		this->points.push_back(glm::dvec2(x, y));
-	}
-
-	// Compute length
-	this->length = 0.;
-	for (int it=1; it<points_len; it++) {
-		glm::dvec2 &point = this->points.at(it);
-		glm::dvec2 &prev  = this->points.at(it - 1);
-		length += glm::distance<double>(point, prev);
-	}
-#ifndef NDEBUG
-	std::cout << "length of track = " << length << std::endl;
-#endif
-}
-
-double track::get16pxPercentage()
-{
-	return 1./(length/16.);
-}
-
 // Direction _MUST_ be normalized!
 static double compute_rotation(glm::dvec2 direction)
 {
@@ -198,29 +169,65 @@ static glm::vec2 compute_direction(glm::dvec2 from, glm::vec2 to)
 	return glm::normalize(glm::dvec2(to.x - from.x, to.y - from.y));
 }
 
-glm::dvec3 track::getPosition(double completion_percentage) const
+track::track(double** points, int points_len, double off_x, double off_y)
+{
+	for (int it=0; it<points_len; it++) {
+		double x, y;
+		x = off_x + points[it][0];
+		y = off_y + points[it][1];
+#ifndef NDEBUG
+		std::cout << "tracks point " << it+1 << " (x, y) = " << x << ", " << y << std::endl;
+#endif
+		this->points.push_back(glm::dvec2(x, y));
+	}
+
+	// Compute length of all segments, distance_to_next and direction_to_next and map_rotation for each segment
+	this->length = 0.;
+	for (int it=1; it<points_len; it++) {
+		glm::dvec2 &point = this->points.at(it);
+		glm::dvec2 &prev  = this->points.at(it - 1);
+
+		double dist = glm::distance<double>(point, prev);
+		distance_to_next.push_back(dist);
+		length += dist;
+
+		glm::dvec2 dir = compute_direction(prev, point);
+		direction_to_next.push_back(dir);
+
+		map_rotation.push_back(compute_rotation(dir));
+	}
+#ifndef NDEBUG
+	std::cout << "length of track = " << length << std::endl;
+#endif
+}
+
+double track::get_16px_percentage()
+{
+	return 1./(length/16.);
+}
+
+glm::dvec3 track::get_position(double completion_percentage) const
 {
 	if (completion_percentage <= 0.) {
-		return glm::dvec3(points.at(0), compute_rotation(compute_direction(points.at(0), points.at(1))));
+		return glm::dvec3(points.front(), map_rotation.front());
 	}
 	if (completion_percentage >= 1.) {
-		return glm::dvec3(points.back(), compute_rotation(compute_direction(points.at(points.size()-2), points.back())));
+		return glm::dvec3(points.back(), map_rotation.back());
 	}
 
 	double real_length = completion_percentage * length;
 
-	for (std::vector<glm::dvec2>::size_type it=1; it<points.size(); it++) {
-		const glm::dvec2 &point = points.at(it);
-		const glm::dvec2 &prev  = points.at(it - 1);
-		double dist = glm::distance<double>(point, prev);
+	for (std::vector<double>::size_type it=0; it<distance_to_next.size(); it++) {
+		double dist = distance_to_next.at(it);
 		if (dist < real_length) {
 			real_length -= dist;
 		}
 		else {
-			glm::dvec2 direction = compute_direction(prev, point);
-			return glm::dvec3(prev + (real_length * direction), compute_rotation(direction));
+			glm::dvec2 point = points.at(it);
+			glm::dvec2 direction = direction_to_next.at(it);
+			return glm::dvec3(point + (real_length * direction), map_rotation.at(it));
 		}
 	}
 
-	return glm::dvec3(points.back(), compute_rotation(compute_direction(points.at(points.size()-2), points.back())));
+	return glm::dvec3(points.back(), map_rotation.back());
 }

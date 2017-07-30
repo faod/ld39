@@ -36,7 +36,7 @@ using namespace glm;
 
 Game::Game():
 		level("data/maps/01.tmx"),
-        player_(level.tracks[2].get16pxPercentage()),
+        player_(level.tracks[2].get_16px_percentage()),
         foodspawner_(player_, level),
         layer_(al_create_bitmap(level.width, level.height))
 {
@@ -77,7 +77,7 @@ void Game::draw()
 {
 	al_clear_to_color(bg_colour);
 
-    auto pos = level.tracks[player_.get_track()].getPosition(player_.get_pos());
+    auto pos = level.tracks[player_.get_track()].get_position(player_.get_pos());
     al_draw_scaled_rotated_bitmap(level.bitmap.get(),
             pos.x, // center x
             pos.y, // center y
@@ -148,7 +148,7 @@ void Game::update_food_pickup(double delta_t)
     auto i = std::begin(foods_);
     auto pt = player_.get_track();
     auto pp = player_.get_pos();
-    auto p16p = level.tracks[pt].get16pxPercentage();
+    auto p16p = level.tracks[pt].get_16px_percentage();
     while (i != std::end(foods_))
     {
         auto& ptr = *i;
