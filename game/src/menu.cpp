@@ -94,6 +94,9 @@ void Menu::handle_impl(const ALLEGRO_EVENT& event)
                 case ALLEGRO_KEY_SPACE:
                     select();
                     break;
+                case ALLEGRO_KEY_ESCAPE:
+                    escape();
+                    break;
             }
             break;
     }
@@ -115,9 +118,15 @@ void Menu::escape()
 {
     if (parent_)
     {
-        parent_->activate(false);
+        activate(false);
         parent_->sub_opened_ = false;
     }
+}
+
+void Menu::disable_parent()
+{
+    assert(parent_);
+    parent_->activate(false);
 }
 std::unique_ptr<Menu> make_map_selection_menu(Game* g, Menu* parent)
 {
@@ -147,7 +156,7 @@ std::unique_ptr<Menu> make_map_selection_menu(Game* g, Menu* parent)
     for (auto& s : entries)
     {
         auto n = m.get();
-        m->add_entry(s, [s, g, n](){ n->activate(false);
+        m->add_entry(s, [s, g, n](){ n->disable_parent();
                                      n->escape();
                                      g->load_game(s);});
     }

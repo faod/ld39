@@ -32,6 +32,7 @@ public:
     void add_entry(std::string display, std::function<void()> on_select);
     void add_entry(std::string display, std::unique_ptr<Menu>&& submenu);
     void escape();
+    void disable_parent();
     void sub_opened(bool);
 private:
     virtual void update_impl(double delta_t) override;
