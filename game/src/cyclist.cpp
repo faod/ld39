@@ -206,3 +206,9 @@ void PlayerCyclist::update_track_change(float delta_t)
     if (track_change_time_ < 0.)
         track_change_time_ = 0;
 }
+
+void PlayerCyclist::add_power(int amount)
+{
+    assert(amount > 0);
+    power_ += amount;
+}

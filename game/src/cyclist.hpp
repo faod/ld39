@@ -57,6 +57,7 @@ public:
     virtual ~PlayerCyclist();
 
     bool alive();
+    void add_power(int amount);
 
 private:
     float power_;

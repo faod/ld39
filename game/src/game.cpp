@@ -49,6 +49,7 @@ Game::Game():
     foodspawner_.set_game(this); 
     add(player_);
     add_update(std::bind(&FoodSpawner::update, foodspawner_, std::placeholders::_1));
+    add_update(std::bind(&Game::update_food_pickup, this, std::placeholders::_1));
     add_draw_back(std::bind(&Game::draw_food, this));
 }
 
@@ -139,6 +140,27 @@ void Game::draw_food()
         f->draw();
     }
     al_set_target_bitmap(restore);
+}
+
+void Game::update_food_pickup(double delta_t)
+{
+    (void) delta_t;
+    auto i = std::begin(foods_);
+    auto pt = player_.get_track();
+    auto pp = player_.get_pos();
+    auto p16p = level.tracks[pt].get16pxPercentage();
+    while (i != std::end(foods_))
+    {
+        auto& ptr = *i;
+        if (ptr->get_track() == pt
+            && std::abs(ptr->get_fpos() - pp) < p16p)
+        {
+            player_.add_power(ptr->get_power());
+            i = foods_.erase(i);
+            continue;
+        }
+        ++i;
+    }
 }
 
 int main(void) {

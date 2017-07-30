@@ -46,6 +46,7 @@ private:
 
     void mk_fps_string(double delta_t);
     void draw_food();
+    void update_food_pickup(double delta_t);
 };
 
 #endif

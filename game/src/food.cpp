@@ -27,15 +27,15 @@
  * FOOD
  *
  */
-Food::Food(glm::dvec3 pos, int track, int power) : pos_(pos), track_(track), power_(power)
+Food::Food(glm::dvec3 pos, float fpos, int track, int power) : pos_(pos), fpos_(fpos), track_(track), power_(power)
 {
     void* sp = nullptr;
     if (power_ < 700)
         sp = al_img_loader("data/banana.png");
     else if (power_ < 1100)
-        sp = al_img_loader("data/epo.png");
-    else
         sp = al_img_loader("data/powerade.png");
+    else
+        sp = al_img_loader("data/epo.png");
 
     sprite_ = std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter>(reinterpret_cast<ALLEGRO_BITMAP*>(sp));
 }
@@ -56,6 +56,16 @@ int Food::get_track() const
 glm::dvec3 Food::get_pos() const
 {
     return pos_;
+}
+
+float Food::get_fpos() const
+{
+    return fpos_;
+}
+
+int Food::get_power() const
+{
+    return power_;
 }
 
 /**
@@ -82,7 +92,7 @@ void FoodSpawner::update(double delta_t)
 
 void FoodSpawner::spawn()
 {
-    time_to_spawn_ = glm::linearRand(5., 20.);
+    time_to_spawn_ = glm::linearRand(3., 12.);
     
     // spawn one food
     const int track = glm::linearRand(0, 4);
@@ -91,7 +101,7 @@ void FoodSpawner::spawn()
     const float pos = glm::linearRand(p.get_pos() + tsize, p.get_pos() + tsize * 8);
     const int power = glm::linearRand(300, 1500);
     assert(game_);
-    game_->spawn_food(std::make_unique<Food>(level_.get().tracks[track].getPosition(pos), track, power));
+    game_->spawn_food(std::make_unique<Food>(level_.get().tracks[track].getPosition(pos), pos, track, power));
 }
 
 void FoodSpawner::set_game(Game* g)

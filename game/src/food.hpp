@@ -24,15 +24,17 @@
 class Food 
 {
 public:
-    Food(glm::dvec3 pos, int track, int power);
+    Food(glm::dvec3 pos, float fpos, int track, int power);
    
     void draw() const;
 
     glm::dvec3 get_pos() const;
+    float get_fpos() const;
     int get_track() const;
-
+    int get_power() const;
 private:
     glm::dvec3 pos_;
+    float fpos_;
     int track_;
     int power_;
     std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter> sprite_;
