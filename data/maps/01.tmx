@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="16" tileheight="16" backgroundcolor="#16530c" nextobjectid="6">
- <tileset firstgid="1" name="roads" tilewidth="16" tileheight="16" spacing="1" tilecount="88" columns="11">
-  <image source="roads.png" width="186" height="135"/>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="26" height="8" tilewidth="16" tileheight="16" backgroundcolor="#183a02" nextobjectid="12">
+ <tileset firstgid="1" name="roads" tilewidth="16" tileheight="16" spacing="1" tilecount="121" columns="11">
+  <image source="roads.png" width="186" height="186"/>
  </tileset>
- <layer name="map" width="32" height="32">
+ <layer name="map" width="26" height="8">
   <data encoding="base64" compression="zlib">
-   eJzt1k0KwjAQBeABlardFH/O4Up3AcWu2/vfplOIIKEMSWZeotDAg5IuPrJ4yTREdK2UPefI2VTK4csfOLtCGRf8ruC5O8F/cS6gPCP8eQ+1lqxf8x9k37EUH9GxGH9LuI7F+MiOSf6J8B2TfOslGau/+uG/hnT3m9bP6f+N4/y3lZ87f1j5Kfc/4vy584e1r+3Ev/va+eOu9Eu/v5+9nmznj3eij0rp+SPMOfBb77eEeX+kNfvO+66Sj35/U/0J2s4eAQ==
+   eJwTZWBgEMWC3YA4hoE4EA3ErjjMgWFmKLYFYh0kPghHEWEXyI5INH3IWB9Ks+LAnkDsQcAumB3uQOyNxyxWPP4JAmJfqF1xOMIiFmpHBBAHE/CPCA6cgWYXNjOQ7cjEY5YInnBPA+IUqF1eOMLCB2pHKhCn4zGLEIDZhSuOmalgB7JdAQzYwyKQBDsAzHEVHw==
   </data>
  </layer>
- <objectgroup name="lines">
-  <object id="1" name="1" x="440" y="456">
-   <polyline points="0,0 0,-384 -368,-384 -368,-336 -48,-336 -48,0 -432,0 -432,-176 -224,-176"/>
+ <objectgroup name="tracks">
+  <object id="7" name="3" x="56" y="40">
+   <polyline points="0,0 48,0 96,48 192,48 240,0 336,0"/>
   </object>
-  <object id="2" name="2" x="456" y="456">
-   <polyline points="0,0 0,-400 -400,-400 -400,-320 -80,-320 -80,-16 -432,-16 -432,-160 -240,-160"/>
+  <object id="8" name="1" x="56" y="8">
+   <polyline points="0,0 48,0 96,48 192,48 240,0 336,0"/>
   </object>
-  <object id="3" name="3" x="472" y="456">
-   <polyline points="0,0 0,-416 -432,-416 -432,-304 -112,-304 -112,-32 -432,-32 -432,-144 -256,-144"/>
+  <object id="9" name="5" x="56" y="72">
+   <polyline points="0,0 48,0 96,48 192,48 240,0 336,0"/>
   </object>
-  <object id="4" name="4" x="488" y="456">
-   <polyline points="0,0 0,-432 -464,-432 -464,-288 -144,-288 -144,-48 -432,-48 -432,-128 -272,-128"/>
+  <object id="10" name="2" x="56" y="24">
+   <polyline points="0,0 48,0 96,48 192,48 240,0 336,0"/>
   </object>
-  <object id="5" name="5" x="504" y="456">
-   <polyline points="0,0 0,-448 -496,-448 -496,-272 -176,-272 -176,-64 -432,-64 -432,-112 -288,-112"/>
+  <object id="11" name="4" x="56" y="56">
+   <polyline points="0,0 48,0 96,48 192,48 240,0 336,0"/>
   </object>
  </objectgroup>
 </map>
