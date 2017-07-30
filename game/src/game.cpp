@@ -34,13 +34,19 @@ using namespace std;
 
 using namespace glm;
 
-Game::Game() : want_menu_(false), want_reload_(false)
+Game::Game() : want_menu_(false), want_pause_(false), want_reload_(false)
 {
     bg_colour = al_map_rgb(0, 0, 40);
     add(menu_);
+    add(pause_);
     
     menu_.add_entry("PLAY", make_map_selection_menu(this, &menu_));
     menu_.add_entry("QUIT", [&]() { throw 1;});
+
+    pause_.add_entry("RESUME", [&]() { pause_.activate(false);
+                                       player_->set_pause(false);
+                                       activate_all();});
+    pause_.activate(false);
     gameover_ = std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter>(reinterpret_cast<ALLEGRO_BITMAP*>(al_img_loader("data/gameover.png")));
 }
 
@@ -128,6 +134,12 @@ void Game::update_impl(double delta_t)
         menu_.activate(true);
     }
 
+    if (player_ && player_->paused())
+    {
+        disable_all();
+        pause_.activate(true);
+    }
+
     if (want_reload_)
     {
         want_reload_ = false;
@@ -156,7 +168,7 @@ void Game::draw_impl()
 {
 	al_clear_to_color(bg_colour);
 
-   Object_aggregator::draw_impl();
+    Object_aggregator::draw_impl();
  
     al_draw_text(debug_font(), al_map_rgb_f(1,1,1), 792, 8, ALLEGRO_ALIGN_RIGHT, fps_string.c_str());
     al_flip_display();
@@ -168,8 +180,7 @@ void Game::handle_impl(const ALLEGRO_EVENT& event)
     case ALLEGRO_EVENT_DISPLAY_CLOSE:
         cerr << "Bye!" << endl;
         throw 1;
-
-    }
+   }
     Object_aggregator::handle_impl(event);
 }
 
@@ -226,9 +237,18 @@ void Game::disable_all()
         o->activate(false);
         player_->activate(false);
         menu_.activate(false);
+        pause_.activate(false);
     }
 }
 
+void Game::activate_all()
+{
+    for (auto& o: objects_)
+    {
+        o->activate(true);
+        player_->activate(true);
+    }
+}
 void Game::game_over()
 {
     disable_all();
@@ -258,7 +278,7 @@ void Game::game_over()
                     break;
                     case ALLEGRO_KEY_SPACE:
                         disable_all();
-                        want_menu_ = true;;
+                        want_menu_ = true;
                     break;
                 }
             break;

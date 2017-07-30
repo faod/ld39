@@ -98,7 +98,7 @@ void FoodSpawner::spawn()
     const int track = glm::linearRand(0, 4);
     const double tsize = level_.get().tracks[track].get_16px_percentage();
     auto& p = player_.get();
-    const float pos = glm::linearRand(p.get_pos() + tsize, p.get_pos() + tsize * 8);
+    const float pos = glm::linearRand(p.get_pos() + tsize * 3, p.get_pos() + tsize * 8);
     const int power = glm::linearRand(300, 1500);
     assert(game_);
     game_->spawn_food(std::make_unique<Food>(level_.get().tracks[track].get_position(level_.get().tracks[2], pos), pos, track, power));

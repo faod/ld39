@@ -77,8 +77,9 @@ float Cyclist::get_pos()
  */
 PlayerCyclist::PlayerCyclist(float forwardper16px) : 
     Cyclist(forwardper16px * 1.5, reinterpret_cast<ALLEGRO_BITMAP*>(al_img_loader("data/maillot_jaune.png"))), 
-    power_(1000.), 
-    track_change_time_(0.)
+    power_(1000.),
+    track_change_time_(0.),
+    paused_(false)
 {
     using vivace::Drawable;
     auto db_fct =  [&]() {
@@ -136,6 +137,15 @@ PlayerCyclist::PlayerCyclist(float forwardper16px) :
 PlayerCyclist::~PlayerCyclist()
 {
 }
+
+bool PlayerCyclist::paused() const
+{
+    return paused_;
+}
+void PlayerCyclist::set_pause(bool pause)
+{
+    paused_ = pause;
+}
 void PlayerCyclist::update_impl(double delta_t)
 {
     if (pos_ >= 1. || power_ <= 0)
@@ -190,6 +200,9 @@ void PlayerCyclist::handle_impl(const ALLEGRO_EVENT& event)
                         track_change_time_ = .4;
                         new_track_ = track_ + 1;
                     }
+                    break;
+                case ALLEGRO_KEY_ESCAPE:
+                    paused_ = true;
                     break;
             }
             break;

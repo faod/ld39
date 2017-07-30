@@ -57,8 +57,9 @@ public:
 
     bool alive() const;
     bool finished() const;
+    bool paused() const;
     void add_power(int amount);
-
+    void set_pause(bool pause);
 private:
     virtual void update_impl(double delta_t) override;
     virtual void draw_impl() override;
@@ -67,6 +68,7 @@ private:
     float power_;
     float track_change_time_;
     int new_track_;
+    bool paused_;
     //Right now, a soft maxpower used to limit the drawing of power
     static const int maxpower = 1500;
     std::vector<std::unique_ptr<Object>> objects_;

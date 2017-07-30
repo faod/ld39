@@ -53,6 +53,7 @@ private:
     std::vector<std::unique_ptr<Food>> foods_;
 
     Menu menu_;
+    Menu pause_;
 
     void mk_fps_string(double delta_t);
     void draw_food();
@@ -60,7 +61,9 @@ private:
     void game_over();
     void game_won();
     void disable_all();
+    void activate_all();
     bool want_menu_;
+    bool want_pause_;
     bool want_reload_;
 };
 
