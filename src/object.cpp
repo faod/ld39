@@ -138,9 +138,10 @@ void Object_aggregator::remove(Object& object)
     {
         if (&(it->get()) == &object)
         {
-            objects.erase(it);
+            it = objects.erase(it);
             return;
         }
+        ++it;
     }
 }
 

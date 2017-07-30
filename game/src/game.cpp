@@ -34,11 +34,13 @@ using namespace std;
 
 using namespace glm;
 
-Game::Game()
+Game::Game() : want_menu_(false), want_reload_(false)
 {
     bg_colour = al_map_rgb(0, 0, 40);
     add(menu_);
     menu_.set_game(this);
+
+    gameover_ = std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter>(reinterpret_cast<ALLEGRO_BITMAP*>(al_img_loader("data/gameover.png")));
 }
 
 void Game::load_game()
@@ -49,6 +51,7 @@ void Game::load_game()
         remove((**it));
         it = objects_.erase(it);
     }
+
     auto drawmap_fct = [&]() {  
         auto pos = level_->tracks[player_->get_track()].get_position(level_->tracks[2], player_->get_pos());
         al_draw_scaled_rotated_bitmap(level_->bitmap.get(),
@@ -74,7 +77,7 @@ void Game::load_game()
     };
     auto drawmap_object = std::make_unique<Drawable>(drawmap_fct);
 
-    level_ = std::make_unique<map>("data/maps/01.tmx");
+    level_ = std::make_unique<map>("data/maps/02.tmx");
     
     if (player_)
     {
@@ -88,10 +91,12 @@ void Game::load_game()
     foodspawner_ = std::make_unique<FoodSpawner>(*player_, *level_);
     foodspawner_->set_game(this); 
     
-    layer_.reset(al_create_bitmap(level_->width, level_->height));
+    if (!layer_)
+        layer_.reset(al_create_bitmap(level_->width, level_->height));
 
     bg_colour = level_->bg_color;
 
+    foods_.clear();
     auto spawner_fct = std::bind(&FoodSpawner::update, foodspawner_.get(), std::placeholders::_1);
     auto spawner_object = std::make_unique<Updatable>(spawner_fct);
     add(*spawner_object);
@@ -116,6 +121,22 @@ void Game::update_impl(double delta_t)
     }
     Object_aggregator::update_impl(delta_t);
 
+    if (want_menu_)
+    {
+        want_menu_ = false;
+        menu_.activate(true);
+    }
+
+    if (want_reload_)
+    {
+        want_reload_ = false;
+        load_game();
+    }
+
+    if (player_ && player_->activated() && !player_->alive())
+    {
+        game_over();
+    }
 
     sum_t += delta_t;
     if (sum_t >= 1.)
@@ -190,6 +211,55 @@ void Game::update_food_pickup(double delta_t)
         }
         ++i;
     }
+}
+void Game::disable_all()
+{
+    for (auto& o: objects_)
+    {
+        o->activate(false);
+        player_->activate(false);
+        menu_.activate(false);
+    }
+}
+
+void Game::game_over()
+{
+    disable_all();
+    auto drawmap_fct = [&]() {
+        al_clear_to_color(al_map_rgb(0, 0, 0));
+        al_draw_bitmap(gameover_.get(),
+            400 - 77,   // destination x
+            600 - 203,   // destination y
+            0      // flags (flip)
+            );
+        al_draw_text(debug_font(), al_map_rgb(255, 0, 0), 400, 300, ALLEGRO_ALIGN_CENTRE, "WASTED");
+        al_draw_text(debug_font(), al_map_rgb(255, 255, 0), 400, 400, ALLEGRO_ALIGN_CENTRE, "[R]etry - Space to Main Menu");
+        };
+    auto drawmap_object = std::make_unique<Drawable>(drawmap_fct);
+    add(*drawmap_object);
+    objects_.emplace_back(std::move(drawmap_object));
+
+    auto gameover_fct = [&](const ALLEGRO_EVENT& event){
+        switch(event.type)
+        {
+            case ALLEGRO_EVENT_KEY_DOWN:
+                switch(event.keyboard.keycode)
+                {
+                    case ALLEGRO_KEY_R:
+                        disable_all();
+                        want_reload_ = true;
+                    break;
+                    case ALLEGRO_KEY_SPACE:
+                        disable_all();
+                        want_menu_ = true;;
+                    break;
+                }
+            break;
+        }
+    };
+    auto gameover_object = std::make_unique<Listener>(gameover_fct);
+    add(*gameover_object);
+    objects_.emplace_back(std::move(gameover_object));
 }
 
 int main(void) {
