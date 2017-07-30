@@ -267,13 +267,14 @@ void Game::game_over()
     disable_all();
     auto drawmap_fct = [&]() {
         al_clear_to_color(al_map_rgb(0, 0, 0));
-        al_draw_bitmap(gameover_.get(),
-            400 - 77,   // destination x
-            600 - 203,   // destination y
-            0      // flags (flip)
-            );
+        al_draw_scaled_bitmap(gameover_.get(),
+		    0, 0,
+            155, 203,
+		    245, 194,
+		    310, 406,
+		    0);
         al_draw_text(debug_font(), al_map_rgb(255, 0, 0), 400, 300, ALLEGRO_ALIGN_CENTRE, "WASTED");
-        al_draw_text(debug_font(), al_map_rgb(255, 255, 0), 400, 400, ALLEGRO_ALIGN_CENTRE, "[R]etry - Space to Main Menu");
+        al_draw_text(debug_font(), al_map_rgb(0, 120, 120), 400, 400, ALLEGRO_ALIGN_CENTRE, "[R]etry - Space to Main Menu");
         };
     auto drawmap_object = std::make_unique<Drawable>(drawmap_fct);
     add(*drawmap_object);
