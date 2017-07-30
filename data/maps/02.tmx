@@ -5,7 +5,7 @@
  </tileset>
  <layer name="map" width="32" height="32">
   <data encoding="base64" compression="zlib">
-   eJzt1k0KwjAQBeABlardFH/O4Up3AcWu2/vfplOIIKEMSWZeotDAg5IuPrJ4yTREdK2UPefI2VTK4csfOLtCGRf8ruC5O8F/cS6gPCP8eQ+1lqxf8x9k37EUH9GxGH9LuI7F+MiOSf6J8B2TfOslGau/+uG/hnT3m9bP6f+N4/y3lZ87f1j5Kfc/4vy584e1r+3Ev/va+eOu9Eu/v5+9nmznj3eij0rp+SPMOfBb77eEeX+kNfvO+66Sj35/U/0J2s4eAQ==
+   eJzt1k0KgzAQBeABKbZ1I/05R1ftLlCxa73/bRwhixJkSDLzkhYMPJC4+MjiJdMS0b1Sjpwzp6mU05c/cQ6FMm/4fcFz94I/cG6gvCP8dQ+1tqxf819k37EUH9GxGP9DuI7F+MiOSf6F8B2TfOslGbu/++G/lnT3m9bP6f+D4/y3lZ87f1j5Kfc/4vy584e1r+3Ev/va+eOp9Eu/v6j5Y0z0USk9f4S5Bn7n/Y4w74+0Vt9531Xy0e9vqr8AuPseQQ==
   </data>
  </layer>
  <objectgroup name="lines">
