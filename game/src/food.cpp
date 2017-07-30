@@ -40,12 +40,12 @@ Food::Food(glm::dvec3 pos, float fpos, int track, int power) : pos_(pos), fpos_(
     sprite_ = std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter>(reinterpret_cast<ALLEGRO_BITMAP*>(sp));
 }
 
-void Food::draw() const
+void Food::draw(double angle) const
 {
-    al_draw_bitmap(sprite_.get(),
-                   pos_.x - 8,
-                   pos_.y - 8,
-                   0);
+	al_draw_rotated_bitmap(sprite_.get(),
+			8,      8,
+			pos_.x, pos_.y,
+			angle, 0);
 }
 
 int Food::get_track() const

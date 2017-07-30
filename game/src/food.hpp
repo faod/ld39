@@ -26,7 +26,7 @@ class Food
 public:
     Food(glm::dvec3 pos, float fpos, int track, int power);
    
-    void draw() const;
+    void draw(double angle) const;
 
     glm::dvec3 get_pos() const;
     float get_fpos() const;

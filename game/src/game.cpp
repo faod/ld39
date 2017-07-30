@@ -108,7 +108,7 @@ void Game::load_game(std::string map_name)
     add(*pickup_object);
     objects_.emplace_back(std::move(pickup_object));
 
-    auto fooddraw_fct = std::bind(&Game::draw_food, this); 
+    auto fooddraw_fct = std::bind(&Game::draw_food, this);
     auto fooddraw_object = std::make_unique<Drawable>(fooddraw_fct);
     add(*fooddraw_object);
     objects_.emplace_back(std::move(fooddraw_object));
@@ -191,9 +191,10 @@ void Game::draw_food()
     ALLEGRO_BITMAP *restore = al_get_target_bitmap();
     al_set_target_bitmap(layer_.get());
     al_clear_to_color(al_map_rgba(0, 0, 0, 0));
+	auto pos = level_->tracks[player_->get_track()].get_position(level_->tracks[2], player_->get_pos());
     for (auto& f : foods_)
     {
-        f->draw();
+        f->draw(-pos.p);
     }
     al_set_target_bitmap(restore);
 }
