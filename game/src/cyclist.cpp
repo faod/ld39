@@ -151,7 +151,7 @@ void PlayerCyclist::update_impl(double delta_t)
 {
     if (pos_ >= 1. || power_ <= 0)
     {
-        return;
+       return; 
     }
 
     Cyclist::update_impl(delta_t);

@@ -34,22 +34,64 @@ using namespace std;
 
 using namespace glm;
 
-Game::Game():
-		level("data/maps/01.tmx"),
-        player_(level.tracks[2].get_16px_percentage()),
-        foodspawner_(player_, level),
-        layer_(al_create_bitmap(level.width, level.height))
+Game::Game()
 {
-    bg_colour = level.bg_color;
-    //johnny = unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter>(al_load_bitmap("data/johnny_running.png"));
-    for (int i=0; i<8; i++) {
-        //ALLEGRO_BITMAP* bmp = al_create_sub_bitmap(johnny.get(), 35*i, 0, 35, 68);
-        //character.add_frame(shared_ptr<ALLEGRO_BITMAP>(bmp, al_bitmap_deleter()), 0.1);
-    }
-    foodspawner_.set_game(this); 
-    add(player_);
+    bg_colour = al_map_rgb(0, 0, 40);
+    add(menu_);
+}
 
-    auto spawner_fct = std::bind(&FoodSpawner::update, foodspawner_, std::placeholders::_1);
+void Game::load_game()
+{
+    auto it = std::begin(objects_);
+    while (it != std::end(objects_))
+    {
+        remove((**it));
+        it = objects_.erase(it);
+    }
+    auto drawmap_fct = [&]() {  
+        auto pos = level_->tracks[player_->get_track()].get_position(level_->tracks[2], player_->get_pos());
+        al_draw_scaled_rotated_bitmap(level_->bitmap.get(),
+            pos.x, // center x
+            pos.y, // center y
+            400,   // destination x
+            450,   // destination y
+            6.,    // xscale
+            6.,    // yscale
+            pos.p, // angle in rad
+            0      // flags (flip)
+            );
+    al_draw_scaled_rotated_bitmap(layer_.get(),
+            pos.x, // center x
+            pos.y, // center y
+            400,   // destination x
+            450,   // destination y
+            6.,    // xscale
+            6.,    // yscale
+            pos.p, // angle in rad
+            0      // flags (flip)
+            );
+    };
+    auto drawmap_object = std::make_unique<Drawable>(drawmap_fct);
+
+    level_ = std::make_unique<map>("data/maps/01.tmx");
+    
+    if (player_)
+    {
+        remove(*player_);
+    }
+    player_ = std::make_unique<PlayerCyclist>(level_->tracks[2].get_16px_percentage());
+    add(*player_);
+    add(*drawmap_object);
+    objects_.emplace_back(std::move(drawmap_object));
+
+    foodspawner_ = std::make_unique<FoodSpawner>(*player_, *level_);
+    foodspawner_->set_game(this); 
+    
+    layer_.reset(al_create_bitmap(level_->width, level_->height));
+
+    bg_colour = level_->bg_color;
+
+    auto spawner_fct = std::bind(&FoodSpawner::update, foodspawner_.get(), std::placeholders::_1);
     auto spawner_object = std::make_unique<Updatable>(spawner_fct);
     add(*spawner_object);
     objects_.emplace_back(std::move(spawner_object));
@@ -63,6 +105,7 @@ Game::Game():
     auto fooddraw_object = std::make_unique<Drawable>(fooddraw_fct);
     add(*fooddraw_object);
     objects_.emplace_back(std::move(fooddraw_object));
+
 }
 
 void Game::update_impl(double delta_t)
@@ -71,6 +114,7 @@ void Game::update_impl(double delta_t)
         cerr << "lag!" << endl;
     }
     Object_aggregator::update_impl(delta_t);
+
 
     sum_t += delta_t;
     if (sum_t >= 1.)
@@ -84,30 +128,7 @@ void Game::draw_impl()
 {
 	al_clear_to_color(bg_colour);
 
-    auto pos = level.tracks[player_.get_track()].get_position(level.tracks[2], player_.get_pos());
-    al_draw_scaled_rotated_bitmap(level.bitmap.get(),
-            pos.x, // center x
-            pos.y, // center y
-            400,   // destination x
-            450,   // destination y
-            6.,    // xscale
-            6.,    // yscale
-            pos.p, // angle in rad
-            0      // flags (flip)
-            );
-    //al_draw_filled_rectangle(pos.x - 5, pos.y - 5, pos.x + 5, pos.y + 5, al_map_rgb(255, 0, 128));
-    //al_draw_bitmap(character.current().get(), 380+pos.x, 280-pos.y, 0);
-    al_draw_scaled_rotated_bitmap(layer_.get(),
-            pos.x, // center x
-            pos.y, // center y
-            400,   // destination x
-            450,   // destination y
-            6.,    // xscale
-            6.,    // yscale
-            pos.p, // angle in rad
-            0      // flags (flip)
-            );
-    Object_aggregator::draw_impl();
+   Object_aggregator::draw_impl();
  
     al_draw_text(debug_font(), al_map_rgb_f(1,1,1), 792, 8, ALLEGRO_ALIGN_RIGHT, fps_string.c_str());
     al_flip_display();
@@ -153,16 +174,16 @@ void Game::update_food_pickup(double delta_t)
 {
     (void) delta_t;
     auto i = std::begin(foods_);
-    auto pt = player_.get_track();
-    auto pp = player_.get_pos();
-    auto p16p = level.tracks[pt].get_16px_percentage();
+    auto pt = player_->get_track();
+    auto pp = player_->get_pos();
+    auto p16p = level_->tracks[pt].get_16px_percentage();
     while (i != std::end(foods_))
     {
         auto& ptr = *i;
         if (ptr->get_track() == pt
             && std::abs(ptr->get_fpos() - pp) < p16p)
         {
-            player_.add_power(ptr->get_power());
+            player_->add_power(ptr->get_power());
             i = foods_.erase(i);
             continue;
         }

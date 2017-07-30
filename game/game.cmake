@@ -4,6 +4,7 @@ add_sources(
   src/cyclist.cpp
   src/map.cpp
   src/food.cpp
+  src/menu.cpp
   src/tmx/tmx.c
   src/tmx/tmx_err.c
   src/tmx/tmx_hash.c
