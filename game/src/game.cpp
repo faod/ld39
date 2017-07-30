@@ -38,6 +38,7 @@ Game::Game()
 {
     bg_colour = al_map_rgb(0, 0, 40);
     add(menu_);
+    menu_.set_game(this);
 }
 
 void Game::load_game()

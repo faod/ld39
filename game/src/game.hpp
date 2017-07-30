@@ -30,6 +30,7 @@ public:
 	Game();
 
     void spawn_food(std::unique_ptr<Food>&& food);
+    void load_game();
 
     protected:
 	virtual void update_impl(double delta_t) override;
@@ -54,7 +55,6 @@ private:
     void mk_fps_string(double delta_t);
     void draw_food();
     void update_food_pickup(double delta_t);
-    void load_game();
 };
 
 #endif

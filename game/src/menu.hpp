@@ -18,15 +18,17 @@
 #define V_MENU_HPP
 #pragma once
 
+
 #include <vivace/object.hpp>
 #include <memory>
 #include <vector>
 
+class Game;
 class Menu : public virtual vivace::Object
 {
 public:
     Menu();
-
+    void set_game(Game* g);
 private:
     virtual void update_impl(double delta_t) override;
     virtual void draw_impl() override;
@@ -35,8 +37,8 @@ private:
     void select();
 
     std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter> menu_;
-    
     unsigned cursor_;
     std::vector<std::string> choices_;
+    Game* game_;
 };
 #endif

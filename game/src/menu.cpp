@@ -15,11 +15,16 @@
 */
 
 #include "menu.hpp"
-
+#include "game.hpp"
 Menu::Menu() : menu_(al_create_bitmap(800, 600)),
                cursor_(0),
-               choices_({"PLAY", "QUIT"})
+               choices_({"PLAY", "QUIT"}),
+               game_(nullptr)
 {
+}
+void Menu::set_game(Game* g)
+{
+    game_ = g;
 }
 
 void Menu::update_impl(double delta_t)
@@ -70,6 +75,9 @@ void Menu::select()
     switch(cursor_)
     {
         case 0: //PLAY
+            activate(false);
+            assert(game_);
+            game_->load_game();
             break;
         case 1: //QUIT
             throw 1;
