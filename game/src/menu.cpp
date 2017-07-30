@@ -26,7 +26,13 @@ Menu::Menu(Menu* parent) : bg_color(al_map_rgb(0, 0, 0)),
                sub_opened_(false),
                parent_(parent)
 {
+	if (!Menu::cursor_bmp)
+	{
+		Menu::cursor_bmp = reinterpret_cast<ALLEGRO_BITMAP*>(al_img_loader("data/cursor.png"));
+	}
 }
+
+ALLEGRO_BITMAP* Menu::cursor_bmp = NULL;
 
 void Menu::update_impl(double delta_t)
 {
@@ -84,8 +90,14 @@ void Menu::draw_impl()
     for (unsigned i = 0; i < choices_.size(); ++i)
     {
         auto&s = std::get<0>(choices_[i]);
-        auto color = cursor_ == i ? al_map_rgb(0, 0, 255) : al_map_rgb(255, 0, 0);
-        al_draw_text(debug_font(), color, 400, 200 + 20 * i, ALLEGRO_ALIGN_CENTRE, s.c_str());
+        if (cursor_ == i) {
+			al_draw_scaled_rotated_bitmap(cursor_bmp,
+			    8.5f, 11.f,
+			    370, 205 + 40 * i,
+			    2.f, 2.f,
+			    1.57f, 0);
+		}
+        draw_scaled_string(debug_font(), al_map_rgb(255, 255, 255), 400, 200 + 40 * i, 2.f, 0, s);
     }
 
     al_set_target_bitmap(restore);

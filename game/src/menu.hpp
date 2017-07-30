@@ -53,6 +53,8 @@ private:
     std::vector<std::tuple<std::string, std::function<void()>, std::unique_ptr<Menu>>> choices_;
     bool sub_opened_;
     Menu* parent_;
+
+	static ALLEGRO_BITMAP* cursor_bmp;
 };
 
 std::unique_ptr<Menu> make_map_selection_menu(Game* g, Menu* parent);
