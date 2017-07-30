@@ -58,6 +58,7 @@ public:
     bool alive() const;
     bool finished() const;
     bool paused() const;
+    float elapsed() const;
     void add_power(int amount);
     void set_pause(bool pause);
 private:
@@ -73,5 +74,6 @@ private:
     static const int maxpower = 1500;
     std::vector<std::unique_ptr<Object>> objects_;
     void update_track_change(float delta_t);
+    float timer_;
 };
 #endif

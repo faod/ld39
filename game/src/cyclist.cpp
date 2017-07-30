@@ -43,7 +43,19 @@ void Cyclist::update_impl(double delta_t)
 }
 
 void Cyclist::draw_impl()
-{
+{    
+    /*al_draw_scaled_bitmap(sprite_.get(),
+                          0,
+                          0,
+                          11,
+                          29,
+                          400 - 33, 
+                          450 - 87,
+                          66, 
+                          174,
+                          0);
+                          */
+ 
 }
 
 void Cyclist::handle_impl(const ALLEGRO_EVENT& event)
@@ -79,7 +91,8 @@ PlayerCyclist::PlayerCyclist(float forwardper16px) :
     Cyclist(forwardper16px * 1.5, reinterpret_cast<ALLEGRO_BITMAP*>(al_img_loader("data/maillot_jaune.png"))), 
     power_(1000.),
     track_change_time_(0.),
-    paused_(false)
+    paused_(false),
+    timer_(0.)
 {
     using vivace::Drawable;
     auto db_fct =  [&]() {
@@ -90,6 +103,11 @@ PlayerCyclist::PlayerCyclist(float forwardper16px) :
             std::ostringstream oss;
             oss << power_ << " kcal";
             al_draw_text(debug_font(), al_map_rgb(0, 255, 0), 790, 130, ALLEGRO_ALIGN_RIGHT, oss.str().c_str());
+            std::ostringstream oss2;
+            oss2.precision(2);
+            oss2 << std::fixed << timer_ << "s";
+            al_draw_text(debug_font(), al_map_rgb(0, 255, 0), 790, 110, ALLEGRO_ALIGN_RIGHT, oss2.str().c_str());
+
             };
     auto db_object = std::make_unique<Drawable>(db_fct);
     add(*db_object);
@@ -152,6 +170,7 @@ void PlayerCyclist::update_impl(double delta_t)
     {
        return; 
     }
+    timer_ += delta_t;
 
     Cyclist::update_impl(delta_t);
     update_track_change(delta_t);
@@ -234,6 +253,11 @@ void PlayerCyclist::update_track_change(float delta_t)
 bool PlayerCyclist::finished() const
 {
     return pos_ >= 1.; 
+}
+
+float PlayerCyclist::elapsed() const
+{
+    return timer_;
 }
 
 void PlayerCyclist::add_power(int amount)
