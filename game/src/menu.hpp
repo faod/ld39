@@ -34,13 +34,19 @@ public:
     void escape();
     void disable_parent();
     void sub_opened(bool);
+	void set_bg_col(ALLEGRO_COLOR col);
+	void set_background(std::shared_ptr<ALLEGRO_BITMAP> bg, float scale_x, float scale_y);
 private:
     virtual void update_impl(double delta_t) override;
     virtual void draw_impl() override;
     virtual void handle_impl(const ALLEGRO_EVENT& event) override;
 
     void select();
-    
+
+	std::shared_ptr<ALLEGRO_BITMAP> background;
+	float bg_scale_x, bg_scale_y;
+	unsigned int bg_h, bg_w;
+	ALLEGRO_COLOR bg_color;
     std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter> menu_;
     unsigned cursor_;
     bool cursor_activate_;

@@ -34,13 +34,15 @@ using namespace std;
 
 using namespace glm;
 
-Game::Game() : want_menu_(false), want_pause_(false), want_reload_(false)
+Game::Game() : want_menu_(false), want_reload_(false)
 {
     bg_colour = al_map_rgb(0, 0, 40);
     add(menu_);
     add(pause_);
-    
-    menu_.add_entry("PLAY", make_map_selection_menu(this, &menu_));
+
+	unique_ptr<Menu> submenu = make_map_selection_menu(this, &menu_);
+	Menu* backup = submenu.get();
+    menu_.add_entry("PLAY", std::move(submenu));
     menu_.add_entry("QUIT", [&]() { throw 1;});
 
     pause_.add_entry("RESUME", [&]() { pause_.activate(false);
@@ -48,6 +50,16 @@ Game::Game() : want_menu_(false), want_pause_(false), want_reload_(false)
                                        activate_all();});
     pause_.activate(false);
     gameover_ = std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter>(reinterpret_cast<ALLEGRO_BITMAP*>(al_img_loader("data/gameover.png")));
+	menubg_ = std::shared_ptr<ALLEGRO_BITMAP>(reinterpret_cast<ALLEGRO_BITMAP*>(al_img_loader("data/menu.png")), al_bitmap_deleter());
+	if (menubg_.get()) {
+		menu_.set_background(menubg_, 2.f, 2.f);
+		menu_.set_bg_col(al_map_rgb(215, 123, 186));
+		backup->set_background(menubg_, 2.f, 2.f);
+		backup->set_bg_col(al_map_rgb(215, 123, 186));
+		pause_.set_background(menubg_, 2.f, 2.f);
+		pause_.set_bg_col(al_map_rgb(215, 123, 186));
+		
+	}
 }
 
 void Game::load_game(std::string map_name)

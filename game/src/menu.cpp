@@ -19,7 +19,8 @@
 #include "vivace/base.hpp"
 #include "vivace/utils.hpp"
 #include <algorithm>
-Menu::Menu(Menu* parent) : menu_(al_create_bitmap(800, 600)),
+Menu::Menu(Menu* parent) : bg_color(al_map_rgb(0, 0, 0)),
+               menu_(al_create_bitmap(800, 600)),
                cursor_(0),
                cursor_activate_(false),
                sub_opened_(false),
@@ -49,16 +50,36 @@ void Menu::add_entry(std::string display, std::unique_ptr<Menu>&& submenu)
     choices_.push_back(std::make_tuple(display, std::function<void()>(), std::move(submenu))); 
 }
 
+void Menu::set_bg_col(ALLEGRO_COLOR col)
+{
+	bg_color = col;
+}
+
 void Menu::sub_opened(bool op)
 {
     sub_opened_ = op;
+}
+
+void Menu::set_background(std::shared_ptr<ALLEGRO_BITMAP> bg, float scale_x, float scale_y)
+{
+	vivace::runtime_assert(bg.get(), "Cannot set NULL background to menu");
+	background = bg;
+	bg_scale_x = scale_x;
+	bg_scale_y = scale_y;
+	bg_h = al_get_bitmap_height(bg.get());
+	bg_w = al_get_bitmap_width(bg.get());
 }
 
 void Menu::draw_impl() 
 {
     ALLEGRO_BITMAP *restore = al_get_target_bitmap();
     al_set_target_bitmap(menu_.get());
-    al_clear_to_color(al_map_rgb(0, 240, 0));
+    al_clear_to_color(bg_color);
+
+	if (background.get())
+	{
+		al_draw_scaled_rotated_bitmap(background.get(), bg_w/2.f, bg_h/2.f, 400, 300, bg_scale_x, bg_scale_y, 0.f, 0);
+	}
 
     for (unsigned i = 0; i < choices_.size(); ++i)
     {

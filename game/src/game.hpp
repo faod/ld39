@@ -48,6 +48,7 @@ private:
     std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter> layer_;
     std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter> gameover_;
     std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter> gamewon_;
+    std::shared_ptr<ALLEGRO_BITMAP> menubg_;
 
     std::vector<std::unique_ptr<Object>> objects_;
     std::vector<std::unique_ptr<Food>> foods_;
@@ -63,7 +64,6 @@ private:
     void disable_all();
     void activate_all();
     bool want_menu_;
-    bool want_pause_;
     bool want_reload_;
 };
 
