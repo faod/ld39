@@ -36,6 +36,7 @@ Vivace::Vivace(const std::string& app_name, const std::string& org_name)
 	al_install_joystick();
 	al_init_font_addon();
 	al_init_primitives_addon();
+	al_install_audio();
 
 #ifdef WANT_IMAGE
 	al_init_image_addon();
