@@ -133,9 +133,12 @@ void Menu::handle_impl(const ALLEGRO_EVENT& event)
                     cursor_ = cursor_ > 0 ? cursor_ - 1 : choices_.size() - 1;
                     break;
                 case ALLEGRO_KEY_SPACE:
+				case ALLEGRO_KEY_ENTER:
+				case ALLEGRO_KEY_PAD_ENTER:
                     select();
                     break;
                 case ALLEGRO_KEY_ESCAPE:
+				case ALLEGRO_KEY_BACKSPACE:
                     escape();
                     break;
             }
