@@ -374,12 +374,12 @@ void Game::game_won()
     auto gamewon_object = std::make_unique<Listener>(gamewon_fct);
     add(*gamewon_object);
     objects_.emplace_back(std::move(gamewon_object));
-} 
+}
 
 int main(void) {
 	try {
         std::srand(std::time(nullptr));
-		Vivace engine("GAME_NAME"s, ""s);
+		Vivace engine(std::string("Pro Cycling Simulator 91"), ""s);
 		map::initialize();
 		unique_ptr<ALLEGRO_DISPLAY, al_display_deleter> dsp(al_create_display(800, 600));
 		Game game;

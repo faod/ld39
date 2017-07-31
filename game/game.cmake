@@ -1,3 +1,4 @@
+set(GAME_NAME "PCS91")
 
 add_sources(
   src/game.cpp
