@@ -316,8 +316,8 @@ void Game::game_over()
 		    245, 194,
 		    310, 406,
 		    0);
-        al_draw_text(debug_font(), al_map_rgb(255, 0, 0), 400, 300, ALLEGRO_ALIGN_CENTRE, "WASTED");
-        al_draw_text(debug_font(), al_map_rgb(0, 120, 120), 400, 400, ALLEGRO_ALIGN_CENTRE, "[R]etry - Space to Main Menu");
+        draw_scaled_text(debug_font(), al_map_rgb(255,   0,   0), 400,  80, 8., ALLEGRO_ALIGN_CENTRE, "HYPOGLYCEMIA");
+        draw_scaled_text(debug_font(), al_map_rgb(  0, 120, 120), 400, 120, 2., ALLEGRO_ALIGN_CENTRE, "[R]etry - Space to Main Menu");
         };
     auto drawmap_object = std::make_unique<Drawable>(drawmap_fct);
     add(*drawmap_object);
@@ -358,8 +358,8 @@ void Game::game_won()
 				181, 144,
 				438, 456,
 				0);
-        al_draw_text(debug_font(), al_map_rgb(255, 0, 0), 400, 300, ALLEGRO_ALIGN_CENTRE, "VICTORY");
-        al_draw_text(debug_font(), al_map_rgb(255, 255, 0), 400, 400, ALLEGRO_ALIGN_CENTRE, "[R]un Again - Space to Main Menu");
+        draw_scaled_text(debug_font(), al_map_rgb(255,   0, 0), 400, 80, 10., ALLEGRO_ALIGN_CENTRE, "VICTORY");
+        draw_scaled_text(debug_font(), al_map_rgb(255, 255, 0), 400, 125, 2., ALLEGRO_ALIGN_CENTRE, "[R]un Again - Space to Main Menu");
         };
     auto drawmap_object = std::make_unique<Drawable>(drawmap_fct);
     add(*drawmap_object);
