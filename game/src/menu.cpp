@@ -19,6 +19,9 @@
 #include "vivace/base.hpp"
 #include "vivace/utils.hpp"
 #include <algorithm>
+
+using namespace std::string_literals;
+
 Menu::Menu(Menu* parent) : off_x(400.f), off_y(300.f), scale(2.f),
                bg_color(al_map_rgb(0, 0, 0)),
                menu_(al_create_bitmap(800, 600)),
@@ -199,7 +202,7 @@ std::unique_ptr<Menu> make_map_selection_menu(Game* g, Menu* parent)
     std::sort(entries.begin(), entries.end());
     for (auto& s : entries)
     {
-		std::string entry_name = s.substr(s.length()-6, 2);
+		std::string entry_name = "Stage "s + s.substr(s.length()-6, 2);
         auto n = m.get();
         m->add_entry(entry_name,
 		             [s, g, n](){ n->disable_parent();
