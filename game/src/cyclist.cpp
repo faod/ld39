@@ -172,14 +172,14 @@ void Cyclist::handle_impl(const ALLEGRO_EVENT& event)
                     sprinting_ = true;
                     break;
                 case ALLEGRO_KEY_LEFT:
-                    if (track_ > 0 && is_zero(track_change_time_))
+                    if (can_go_left() && is_zero(track_change_time_))
                     {
                         track_change_time_ = .4;
                         track_ = track_ - 1;
                     }
                     break;
                 case ALLEGRO_KEY_RIGHT:
-                    if (track_ < 4 && is_zero(track_change_time_))
+                    if (can_go_right() && is_zero(track_change_time_))
                     {
                         track_change_time_ = .4;
                         track_ = track_ + 1;
@@ -229,4 +229,14 @@ void Cyclist::add_power(int amount)
 {
     assert(amount > 0);
     power_ += amount;
+}
+
+bool Cyclist::can_go_left()
+{
+	return track_ > 0 && competitors.get_colliding(track_-1, pos_, percent16px/16.*11.) == NULL;
+}
+
+bool Cyclist::can_go_right()
+{
+	return track_ < 4 && competitors.get_colliding(track_+1, pos_, percent16px/16.*11.) == NULL;
 }

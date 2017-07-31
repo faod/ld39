@@ -62,5 +62,8 @@ private:
     void update_track_change(float delta_t);
     float timer_;
 	Competitors& competitors;
+
+	bool can_go_left();
+	bool can_go_right();
 };
 #endif
