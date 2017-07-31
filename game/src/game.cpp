@@ -89,12 +89,12 @@ void Game::load_game(std::string map_name)
             0      // flags (flip)
             );
     al_draw_scaled_rotated_bitmap(layer_.get(),
-            pos.x, // center x
-            pos.y, // center y
+            pos.x*2.f, // center x
+            pos.y*2.f, // center y
             400,   // destination x
             450,   // destination y
-            6.,    // xscale
-            6.,    // yscale
+            3.,    // xscale
+            3.,    // yscale
             pos.p, // angle in rad
             0      // flags (flip)
             );
@@ -115,7 +115,17 @@ void Game::load_game(std::string map_name)
     foodspawner_ = std::make_unique<FoodSpawner>(*player_, *level_);
     foodspawner_->set_game(this); 
 
-	layer_.reset(al_create_bitmap(level_->width, level_->height));
+	layer_.reset(al_create_bitmap(level_->width * 2, level_->height * 2));
+
+	// Set scale transform on map
+	ALLEGRO_TRANSFORM transform;
+	al_identity_transform(&transform);
+	al_scale_transform(&transform, 2.f, 2.f);
+	ALLEGRO_BITMAP *restore = al_get_target_bitmap();
+    al_set_target_bitmap(layer_.get());
+    al_use_transform(&transform);
+    al_set_target_bitmap(restore);
+
 	competitors_.set_level(level_.get());
 
     bg_colour = level_->bg_color;
