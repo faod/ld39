@@ -52,6 +52,9 @@ private:
     std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter> gamewon_;
     std::shared_ptr<ALLEGRO_BITMAP> menubg_;
 
+	std::unique_ptr<ALLEGRO_VOICE, al_voice_deleter> voice;
+	std::unique_ptr<ALLEGRO_AUDIO_STREAM, al_audio_stream_deleter> stream;
+
     std::vector<std::unique_ptr<Object>> objects_;
     std::vector<std::unique_ptr<Food>> foods_;
 

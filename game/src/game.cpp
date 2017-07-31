@@ -65,6 +65,16 @@ Game::Game() : want_menu_(false), want_reload_(false)
 	}
 
 	gamewon_ = std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter>(reinterpret_cast<ALLEGRO_BITMAP*>(al_img_loader("data/victory.png")));
+
+	al_reserve_samples(4);
+	voice = std::unique_ptr<ALLEGRO_VOICE, al_voice_deleter>(al_create_voice(44100, ALLEGRO_AUDIO_DEPTH_INT16, ALLEGRO_CHANNEL_CONF_2));
+	stream = std::unique_ptr<ALLEGRO_AUDIO_STREAM, al_audio_stream_deleter>(
+		al_load_audio_stream("data/tour_de_france.ogg", 4, 2048)
+	);
+	al_set_audio_stream_playmode(stream.get(), ALLEGRO_PLAYMODE_LOOP);
+	al_attach_mixer_to_voice(al_get_default_mixer(), voice.get());
+	al_set_mixer_gain(al_get_default_mixer(), 0.5);
+	vivace::runtime_assert(al_attach_audio_stream_to_mixer(stream.get(), al_get_default_mixer()), "Cannot play music");
 }
 
 void Game::load_game(std::string map_name)
