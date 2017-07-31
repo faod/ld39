@@ -24,13 +24,15 @@
  * PLAYER CYCLIST
  *
  */
-Cyclist::Cyclist(float forwardper16px):
+Cyclist::Cyclist(Competitors& competitors, float forwardper16px):
+	percent16px(forwardper16px),
 	pos_(0.), speed_(forwardper16px * 3.), sprinting_(false), sprinting_ratio_(1.), track_(2),
 	sprite_(reinterpret_cast<ALLEGRO_BITMAP*>(al_img_loader("data/maillot_jaune.png"))),
     power_(1000.),
     track_change_time_(0.),
     paused_(false),
-    timer_(0.)
+    timer_(0.),
+	competitors(competitors)
 {
     using vivace::Drawable;
     auto db_fct =  [&]() {
@@ -125,7 +127,16 @@ void Cyclist::update_impl(double delta_t)
         sprinting_ratio_ = glm::clamp(sprinting_ratio_ + delta_t, 1., 2.);
     else
         sprinting_ratio_ = glm::clamp(sprinting_ratio_ - delta_t, 1., 2.);
-    pos_ += speed_ * sprinting_ratio_ * delta_t;
+    double new_pos = pos_ + speed_ * sprinting_ratio_ * delta_t;
+	const Competitor* colliding = competitors.get_colliding_front(track_, new_pos, percent16px/16.f * 22.f);
+	if (colliding)
+	{
+		pos_ += colliding->get_speed() * delta_t;
+		sprinting_ratio_ = 1.f;
+	}
+	else {
+		pos_ = new_pos;
+	}
 
     update_track_change(delta_t);
     power_ -= 100. * sprinting_ratio_ * delta_t;
@@ -164,14 +175,14 @@ void Cyclist::handle_impl(const ALLEGRO_EVENT& event)
                     if (track_ > 0 && is_zero(track_change_time_))
                     {
                         track_change_time_ = .4;
-                        new_track_ = track_ - 1;
+                        track_ = track_ - 1;
                     }
                     break;
                 case ALLEGRO_KEY_RIGHT:
                     if (track_ < 4 && is_zero(track_change_time_))
                     {
                         track_change_time_ = .4;
-                        new_track_ = track_ + 1;
+                        track_ = track_ + 1;
                     }
                     break;
                 case ALLEGRO_KEY_ESCAPE:
@@ -198,8 +209,8 @@ bool Cyclist::alive() const
 void Cyclist::update_track_change(float delta_t)
 {
     track_change_time_ -= delta_t;
-    if (track_change_time_ > 0. && track_change_time_ < .2)
-        track_ = new_track_;
+   /* if (track_change_time_ > 0. && track_change_time_ < .2)
+        track_ = new_track_;*/
     if (track_change_time_ < 0.)
         track_change_time_ = 0;
 }

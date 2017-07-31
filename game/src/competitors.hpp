@@ -26,18 +26,19 @@
 // A competitor (bot)
 class Competitor {
 public:
-	Competitor(std::function<glm::dvec3(float)> position_provider, int track, float pos, float speed);
+	Competitor(std::function<glm::dvec3(float)> position_provider, int track, float pos, float speed, float percent16px);
 
-	float get_pos();
-    int get_track();
+	float get_speed() const;
+	float get_pos() const;
+    int get_track() const;
 
 	void draw();
-	void update(double delta_t);
+	void update(double delta_t, std::vector<Competitor>& track_comps);
 
 private:
 	std::function<glm::dvec3(float)> position_provider;
 	int track;
-	float pos, speed;
+	float pos, speed, percent16px;
 	ALLEGRO_COLOR color;
 
 	static ALLEGRO_BITMAP* bmp;
@@ -56,8 +57,10 @@ public:
 	void draw();
 	// Update competitors
 	void update(double delta_t);
-	// return `true` if given position is at less or equal than min_dist (in completion %age)
-	bool collides(int track, float pos, float min_dist);
+	// return a pointer to a Competitor if it is right after the given position, NULL otherwise
+	const Competitor* get_colliding_front(int track, float pos, float min_dist) const;
+	// return a pointer to a Competitor if it is in the vicinity of the given position
+	const Competitor* get_colliding(int track, float pos, float min_dist) const;
 
 private:
 	map* level;

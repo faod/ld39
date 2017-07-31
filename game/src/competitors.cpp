@@ -21,11 +21,12 @@
 
 ALLEGRO_BITMAP* Competitor::bmp = NULL;
 
-Competitor::Competitor(std::function<glm::dvec3(float)> position_provider, int track, float pos, float speed):
+Competitor::Competitor(std::function<glm::dvec3(float)> position_provider, int track, float pos, float speed, float percent16px):
 	position_provider(position_provider),
 	track(track),
 	pos(pos),
-	speed(speed)
+	speed(speed),
+	percent16px(percent16px)
 {
 	if (!bmp) {
 		bmp = reinterpret_cast<ALLEGRO_BITMAP*>(al_img_loader("data/maillot_blend.png"));
@@ -34,12 +35,17 @@ Competitor::Competitor(std::function<glm::dvec3(float)> position_provider, int t
 	color = al_map_rgb(glm::linearRand(0,255), glm::linearRand(0,255), glm::linearRand(0,255));
 }
 
-float Competitor::get_pos()
+float Competitor::get_speed() const
+{
+	return speed;
+}
+
+float Competitor::get_pos() const
 {
 	return pos;
 }
 
-int Competitor::get_track()
+int Competitor::get_track() const
 {
 	return track;
 }
@@ -60,9 +66,20 @@ void Competitor::draw()
 #endif
 }
 
-void Competitor::update(double delta_t)
+void Competitor::update(double delta_t, std::vector<Competitor>& track_comps)
 {
-	pos += speed * delta_t;
+	float new_pos = pos + speed * delta_t;
+	// Check collision
+	for (Competitor& competitor: track_comps) {
+		if (competitor.pos != pos && competitor.speed != speed) { // cannot collision with itself
+			if (competitor.pos <= pos + percent16px/16.f*11.f && competitor.pos > pos) {
+				if (competitor.speed < speed) {
+					new_pos = pos + competitor.speed * delta_t;
+				}
+			}
+		}
+	}
+	pos = new_pos;
 }
 
 // -----------------------------------------------------------------------------
@@ -80,20 +97,31 @@ void Competitors::update(double delta_t)
 {
 	for (auto& competitors_array: competitors) {
 		for (Competitor& competitor: competitors_array) {
-			competitor.update(delta_t);
+			competitor.update(delta_t, competitors_array);
 		}
 	}
 }
 
-bool Competitors::collides(int track, float pos, float min_dist)
+const Competitor* Competitors::get_colliding_front(int track, float pos, float min_dist) const
 {
 	auto& competitors_array = competitors[track];
-	for (Competitor& competitor: competitors_array) {
-		if (competitor.get_pos() <= pos + min_dist || competitor.get_pos() <= pos + min_dist) {
-			return true;
+	for (const Competitor& competitor: competitors_array) {
+		if (competitor.get_pos() <= pos + min_dist && competitor.get_pos() >= pos) {
+			return &competitor;
 		}
 	}
-	return false;
+	return NULL;
+}
+
+const Competitor* Competitors::get_colliding(int track, float pos, float min_dist) const
+{
+	auto& competitors_array = competitors[track];
+	for (const Competitor& competitor: competitors_array) {
+		if (competitor.get_pos() <= pos + min_dist && competitor.get_pos() >= pos - min_dist) {
+			return &competitor;
+		}
+	}
+	return NULL;
 }
 
 void Competitors::set_level(map* level)
@@ -120,7 +148,8 @@ void Competitors::set_level(map* level)
 					[&track_ref, &track_it](float pos){ return track_it.get_position(track_ref, pos); },
 					it,
 					spawn_pos,
-					g_unit * glm::linearRand(1.5f, 3.f)
+					g_unit * glm::linearRand(1.5f, 3.f),
+					g_unit
 				)
 			);
 			std::cout << "Spawned competitor at " << spawn_pos*100 << "%" << std::endl;	

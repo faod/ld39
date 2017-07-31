@@ -27,7 +27,7 @@
 
 class Cyclist: public vivace::Object_aggregator {
 public:
-    Cyclist(float forwardper16px);
+    Cyclist(Competitors& competitors, float forwardper16px);
 
     virtual ~Cyclist();
 
@@ -44,6 +44,7 @@ private:
     virtual void draw_impl() override;
     virtual void handle_impl(const ALLEGRO_EVENT& event) override;
 
+	float percent16px;
     float pos_;
     float speed_;
     bool sprinting_;
@@ -60,5 +61,6 @@ private:
     std::vector<std::unique_ptr<Object>> objects_;
     void update_track_change(float delta_t);
     float timer_;
+	Competitors& competitors;
 };
 #endif
