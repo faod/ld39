@@ -6,6 +6,7 @@ add_sources(
   src/food.cpp
   src/menu.cpp
   src/utilities.cpp
+  src/competitors.cpp
   src/tmx/tmx.c
   src/tmx/tmx_err.c
   src/tmx/tmx_hash.c

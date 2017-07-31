@@ -20,6 +20,7 @@
 #include "cyclist.hpp"
 #include "food.hpp"
 #include "map.hpp"
+#include "competitors.hpp"
 using namespace vivace;
 
 #include <exception>
@@ -115,6 +116,7 @@ void Game::load_game(std::string map_name)
     foodspawner_->set_game(this); 
 
 	layer_.reset(al_create_bitmap(level_->width, level_->height));
+	competitors_.set_level(level_.get());
 
     bg_colour = level_->bg_color;
 
@@ -133,6 +135,16 @@ void Game::load_game(std::string map_name)
     auto fooddraw_object = std::make_unique<Drawable>(fooddraw_fct);
     add(*fooddraw_object);
     objects_.emplace_back(std::move(fooddraw_object));
+
+    auto competitors_fct = std::bind(&Competitors::update, &(this->competitors_), std::placeholders::_1);
+    auto competitors_object = std::make_unique<Updatable>(competitors_fct);
+    add(*competitors_object);
+    objects_.emplace_back(std::move(competitors_object));
+
+    auto compdraw_fct = std::bind(&Game::draw_competitors, this);
+    auto compdraw_object = std::make_unique<Drawable>(compdraw_fct);
+    add(*compdraw_object);
+    objects_.emplace_back(std::move(compdraw_object));
 
 }
 
@@ -207,6 +219,15 @@ void Game::mk_fps_string(double delta_t)
 
 }
 
+void Game::draw_competitors()
+{
+    ALLEGRO_BITMAP *restore = al_get_target_bitmap();
+    al_set_target_bitmap(layer_.get());
+    al_clear_to_color(al_map_rgba(0, 0, 0, 0));
+	competitors_.draw();
+    al_set_target_bitmap(restore);
+}
+
 void Game::spawn_food(std::unique_ptr<Food>&& food)
 {
     foods_.emplace_back(std::move(food));
@@ -216,7 +237,6 @@ void Game::draw_food()
 {
     ALLEGRO_BITMAP *restore = al_get_target_bitmap();
     al_set_target_bitmap(layer_.get());
-    al_clear_to_color(al_map_rgba(0, 0, 0, 0));
 	auto pos = level_->tracks[player_->get_track()].get_position(level_->tracks[2], player_->get_pos());
     for (auto& f : foods_)
     {

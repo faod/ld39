@@ -23,6 +23,7 @@
 #include "food.hpp"
 #include "map.hpp"
 #include "menu.hpp"
+#include "competitors.hpp"
 
 class Game: public vivace::Object_aggregator
 {
@@ -44,6 +45,7 @@ private:
     std::unique_ptr<map> level_;
     std::unique_ptr<PlayerCyclist> player_;
     std::unique_ptr<FoodSpawner> foodspawner_;
+	Competitors competitors_;
 
     std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter> layer_;
     std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter> gameover_;
@@ -57,6 +59,7 @@ private:
     Menu pause_;
 
     void mk_fps_string(double delta_t);
+	void draw_competitors();
     void draw_food();
     void update_food_pickup(double delta_t);
     void game_over();
