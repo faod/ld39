@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="64" height="64" tilewidth="16" tileheight="16" backgroundcolor="#183a02" nextobjectid="6">
+ <tileset firstgid="1" name="roads" tilewidth="16" tileheight="16" spacing="1" tilecount="121" columns="11">
+  <image source="roads.png" width="186" height="186"/>
+ </tileset>
+ <layer name="map" width="64" height="64">
+  <data encoding="base64" compression="zlib">
+   eJztmdtKAzEQhgfEi3olHh7Ah9A7QfGMeuERT6VUEBHx/W+dkF0sNdnMwiadSf8PflrYzTZfNt2EHaIyvHJOONvKUgLn/sxZUZIdzn7zPTet+xnnkrOqLDmZdX/i3NHi732p+x9y/+JsKUsp9w/OZ6bf0wTc4b5s7o4p+efpA3n3b1oed8caef/15nO02O4Up0b/0J79lPMWOLc2/9C+9YJzznmh/2NQk39s33rLuabwGNTkP/8sPyS/VzwgPwb3zfH3mTY1+cdcuhzhD3/4wx/+8Ic//OFvl9z+XbUgDeT0T9WCNJDLX1IL0oDUf4/+5u1upE2LtBakAal/KCH/PrUgDaT8jyleTzyaa2PxvXjKX5K2jcX34jH/DZLXFTcT19LMUH12c39Cfu4/Ntf6GaKDmRnC3+L/vqVrnZNmTDbdHZJ1LhWr7g7JOpfKFdl0d/RZ57pi0d3RZ52L5YZsugMAAAAAAAAAAAAAAAAANfALKcdJ3A==
+  </data>
+ </layer>
+ <objectgroup name="tracks"/>
+</map>
