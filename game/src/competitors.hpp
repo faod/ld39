@@ -56,6 +56,8 @@ public:
 	void draw();
 	// Update competitors
 	void update(double delta_t);
+	// return `true` if given position is at less or equal than min_dist (in completion %age)
+	bool collides(int track, float pos, float min_dist);
 
 private:
 	map* level;

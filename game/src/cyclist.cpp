@@ -18,77 +18,15 @@
 #include "cyclist.hpp"
 #include "map.hpp"
 #include <sstream>
-/**
- *
- * CYCLIST 
- *
- */
-Cyclist::Cyclist(float forwardp16px, ALLEGRO_BITMAP* sp) : pos_(0.), speed_(forwardp16px * 2), sprinting_(false), sprinting_ratio_(1.), track_(2)
-{
-    if (!sp)
-        sp = reinterpret_cast<ALLEGRO_BITMAP*>(al_img_loader("data/maillot_blend.png"));
-
-    sprite_ = std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter>(sp);
-}
-
-Cyclist::~Cyclist()
-{
-}
-
-void Cyclist::update_impl(double delta_t)
-{
-    //update cyclist movement
-    update_sprinting_ratio(delta_t);
-    pos_ += speed_ * sprinting_ratio_ * delta_t;
-}
-
-void Cyclist::draw_impl()
-{    
-    /*al_draw_scaled_bitmap(sprite_.get(),
-                          0,
-                          0,
-                          11,
-                          29,
-                          400 - 33, 
-                          450 - 87,
-                          66, 
-                          174,
-                          0);
-                          */
- 
-}
-
-void Cyclist::handle_impl(const ALLEGRO_EVENT& event)
-{
-    (void) event;
-    //Handle events : void for bots
-}
-
-void Cyclist::update_sprinting_ratio(double delta_t)
-{
-    if (sprinting_)
-        sprinting_ratio_ = glm::clamp(sprinting_ratio_ + delta_t, 1., 2.);
-    else
-        sprinting_ratio_ = glm::clamp(sprinting_ratio_ - delta_t, 1., 2.);
-}
-
-int Cyclist::get_track()
-{
-    return track_;
-}
-
-float Cyclist::get_pos()
-{
-    return pos_;
-}
 
 /**
  *
  * PLAYER CYCLIST
  *
  */
-PlayerCyclist::PlayerCyclist(float forwardper16px) : 
-    Cyclist(forwardper16px * 1.5, reinterpret_cast<ALLEGRO_BITMAP*>(al_img_loader("data/maillot_jaune.png"))), 
+Cyclist::Cyclist(float forwardper16px):
+	pos_(0.), speed_(forwardper16px * 3.), sprinting_(false), sprinting_ratio_(1.), track_(2),
+	sprite_(reinterpret_cast<ALLEGRO_BITMAP*>(al_img_loader("data/maillot_jaune.png"))),
     power_(1000.),
     track_change_time_(0.),
     paused_(false),
@@ -152,19 +90,29 @@ PlayerCyclist::PlayerCyclist(float forwardper16px) :
 #endif
 }
 
-PlayerCyclist::~PlayerCyclist()
+Cyclist::~Cyclist()
 {
 }
 
-bool PlayerCyclist::paused() const
+int Cyclist::get_track()
+{
+    return track_;
+}
+
+float Cyclist::get_pos()
+{
+    return pos_;
+}
+
+bool Cyclist::paused() const
 {
     return paused_;
 }
-void PlayerCyclist::set_pause(bool pause)
+void Cyclist::set_pause(bool pause)
 {
     paused_ = pause;
 }
-void PlayerCyclist::update_impl(double delta_t)
+void Cyclist::update_impl(double delta_t)
 {
     if (pos_ >= 1. || power_ <= 0)
     {
@@ -172,7 +120,13 @@ void PlayerCyclist::update_impl(double delta_t)
     }
     timer_ += delta_t;
 
-    Cyclist::update_impl(delta_t);
+    //update cyclist movement
+    if (sprinting_)
+        sprinting_ratio_ = glm::clamp(sprinting_ratio_ + delta_t, 1., 2.);
+    else
+        sprinting_ratio_ = glm::clamp(sprinting_ratio_ - delta_t, 1., 2.);
+    pos_ += speed_ * sprinting_ratio_ * delta_t;
+
     update_track_change(delta_t);
     power_ -= 100. * sprinting_ratio_ * delta_t;
 
@@ -181,7 +135,7 @@ void PlayerCyclist::update_impl(double delta_t)
         power_ = 0;
     }
 }
-void PlayerCyclist::draw_impl()
+void Cyclist::draw_impl()
 {
     al_draw_scaled_bitmap(sprite_.get(),
                           0,
@@ -195,7 +149,7 @@ void PlayerCyclist::draw_impl()
                           0);
     Object_aggregator::draw_impl();
 }
-void PlayerCyclist::handle_impl(const ALLEGRO_EVENT& event) 
+void Cyclist::handle_impl(const ALLEGRO_EVENT& event) 
 {
     Object_aggregator::handle_impl(event);
     switch(event.type)
@@ -236,12 +190,12 @@ void PlayerCyclist::handle_impl(const ALLEGRO_EVENT& event)
     }
 }
 
-bool PlayerCyclist::alive() const
+bool Cyclist::alive() const
 {
     return power_ > 0;
 }
 
-void PlayerCyclist::update_track_change(float delta_t)
+void Cyclist::update_track_change(float delta_t)
 {
     track_change_time_ -= delta_t;
     if (track_change_time_ > 0. && track_change_time_ < .2)
@@ -250,17 +204,17 @@ void PlayerCyclist::update_track_change(float delta_t)
         track_change_time_ = 0;
 }
 
-bool PlayerCyclist::finished() const
+bool Cyclist::finished() const
 {
     return pos_ >= 1.; 
 }
 
-float PlayerCyclist::elapsed() const
+float Cyclist::elapsed() const
 {
     return timer_;
 }
 
-void PlayerCyclist::add_power(int amount)
+void Cyclist::add_power(int amount)
 {
     assert(amount > 0);
     power_ += amount;

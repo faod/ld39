@@ -44,12 +44,12 @@ class Game;
 class FoodSpawner
 {
 public:
-    FoodSpawner(PlayerCyclist& player, map& level);
+    FoodSpawner(Cyclist& player, map& level);
     
     void set_game(Game* g);
     void update(double delta_t);
 private:
-    std::reference_wrapper<PlayerCyclist> player_;
+    std::reference_wrapper<Cyclist> player_;
     std::reference_wrapper<map> level_;
     Game* game_;
 

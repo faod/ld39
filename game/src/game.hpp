@@ -43,7 +43,7 @@ private:
     ALLEGRO_COLOR bg_colour;
 
     std::unique_ptr<map> level_;
-    std::unique_ptr<PlayerCyclist> player_;
+    std::unique_ptr<Cyclist> player_;
     std::unique_ptr<FoodSpawner> foodspawner_;
 	Competitors competitors_;
 

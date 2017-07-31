@@ -77,7 +77,7 @@ int Food::get_power() const
  *
  */
 
-FoodSpawner::FoodSpawner(PlayerCyclist& player, map& level) :
+FoodSpawner::FoodSpawner(Cyclist& player, map& level) :
                 player_(player),
                 level_(level),
                 game_(nullptr),

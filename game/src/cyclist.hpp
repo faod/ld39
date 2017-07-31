@@ -23,16 +23,23 @@
 #include <memory>
 #include <vector>
 
-class Cyclist : public virtual vivace::Object {
+#include "competitors.hpp"
+
+class Cyclist: public vivace::Object_aggregator {
 public:
-    Cyclist(float forwardp16px, ALLEGRO_BITMAP* sp = nullptr);
+    Cyclist(float forwardper16px);
 
     virtual ~Cyclist();
 
+    bool alive() const;
+    bool finished() const;
+    bool paused() const;
+    float elapsed() const;
+    void add_power(int amount);
+    void set_pause(bool pause);
     float get_pos();
     int get_track();
-
-protected:
+private:
     virtual void update_impl(double delta_t) override;
     virtual void draw_impl() override;
     virtual void handle_impl(const ALLEGRO_EVENT& event) override;
@@ -42,30 +49,8 @@ protected:
     bool sprinting_;
     float sprinting_ratio_;
     int track_;
-    
     std::unique_ptr<ALLEGRO_BITMAP, al_bitmap_deleter> sprite_;
-    
-    //protected fcts
-    void update_sprinting_ratio(double delta_t);
-};
 
-class PlayerCyclist : public Cyclist, public vivace::Object_aggregator {
-public:
-    PlayerCyclist(float forwardper16px);
-
-    virtual ~PlayerCyclist();
-
-    bool alive() const;
-    bool finished() const;
-    bool paused() const;
-    float elapsed() const;
-    void add_power(int amount);
-    void set_pause(bool pause);
-private:
-    virtual void update_impl(double delta_t) override;
-    virtual void draw_impl() override;
-    virtual void handle_impl(const ALLEGRO_EVENT& event) override;
-    
     float power_;
     float track_change_time_;
     int new_track_;

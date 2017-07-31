@@ -107,7 +107,7 @@ void Game::load_game(std::string map_name)
     {
         remove(*player_);
     }
-    player_ = std::make_unique<PlayerCyclist>(level_->tracks[2].get_16px_percentage());
+    player_ = std::make_unique<Cyclist>(level_->tracks[2].get_16px_percentage());
     add(*player_);
     add(*drawmap_object);
     objects_.emplace_back(std::move(drawmap_object));

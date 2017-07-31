@@ -34,6 +34,16 @@ Competitor::Competitor(std::function<glm::dvec3(float)> position_provider, int t
 	color = al_map_rgb(glm::linearRand(0,255), glm::linearRand(0,255), glm::linearRand(0,255));
 }
 
+float Competitor::get_pos()
+{
+	return pos;
+}
+
+int Competitor::get_track()
+{
+	return track;
+}
+
 void Competitor::draw()
 {
 	glm::dvec3 pos2d = position_provider(pos);
@@ -75,6 +85,17 @@ void Competitors::update(double delta_t)
 	}
 }
 
+bool Competitors::collides(int track, float pos, float min_dist)
+{
+	auto& competitors_array = competitors[track];
+	for (Competitor& competitor: competitors_array) {
+		if (competitor.get_pos() <= pos + min_dist || competitor.get_pos() <= pos + min_dist) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void Competitors::set_level(map* level)
 {
 	competitors.clear();
@@ -99,7 +120,7 @@ void Competitors::set_level(map* level)
 					[&track_ref, &track_it](float pos){ return track_it.get_position(track_ref, pos); },
 					it,
 					spawn_pos,
-					g_unit * glm::linearRand(1.5f, 2.f)
+					g_unit * glm::linearRand(1.5f, 3.f)
 				)
 			);
 			std::cout << "Spawned competitor at " << spawn_pos*100 << "%" << std::endl;	
