@@ -19,6 +19,9 @@
 #include "map.hpp"
 #include <sstream>
 
+static ALLEGRO_SAMPLE* PICKUP = NULL;
+static ALLEGRO_SAMPLE* SPRINT = NULL;
+
 /**
  *
  * PLAYER CYCLIST
@@ -34,6 +37,13 @@ Cyclist::Cyclist(Competitors& competitors, float forwardper16px):
     timer_(0.),
 	competitors(competitors)
 {
+	if (!PICKUP) {
+		PICKUP = al_load_sample("data/pickup.ogg");
+	}
+	if (!SPRINT) {
+		SPRINT = al_load_sample("data/sprint.ogg");
+	}
+
     using vivace::Drawable;
     auto db_fct =  [&]() {
             al_draw_rectangle(772, 150, 790, 500, al_map_rgb(0, 255, 0), 1.);
@@ -175,6 +185,7 @@ void Cyclist::handle_impl(const ALLEGRO_EVENT& event)
             switch(event.keyboard.keycode)
             {
                 case ALLEGRO_KEY_LCTRL:
+					al_play_sample(SPRINT, 0.5, 0., 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
                     sprinting_ = true;
                     break;
                 case ALLEGRO_KEY_LEFT:
@@ -232,6 +243,7 @@ float Cyclist::elapsed() const
 void Cyclist::add_power(int amount)
 {
     assert(amount > 0);
+	al_play_sample(PICKUP, 0.5, 0., 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
     power_ += amount;
 }
 

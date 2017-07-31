@@ -71,6 +71,7 @@ Game::Game() : want_menu_(false), want_reload_(false)
 	stream = std::unique_ptr<ALLEGRO_AUDIO_STREAM, al_audio_stream_deleter>(
 		al_load_audio_stream("data/tour_de_france.ogg", 4, 2048)
 	);
+	dead = std::unique_ptr<ALLEGRO_SAMPLE, al_sample_deleter>(al_load_sample("data/dead.ogg"));
 	al_set_audio_stream_playmode(stream.get(), ALLEGRO_PLAYMODE_LOOP);
 	al_attach_mixer_to_voice(al_get_default_mixer(), voice.get());
 	al_set_mixer_gain(al_get_default_mixer(), 0.5);
@@ -343,6 +344,7 @@ void Game::game_over()
     auto gameover_object = std::make_unique<Listener>(gameover_fct);
     add(*gameover_object);
     objects_.emplace_back(std::move(gameover_object));
+	al_play_sample(dead.get(), 0.5, 0., 1.0, ALLEGRO_PLAYMODE_ONCE, NULL);
 }
 
 void Game::game_won()

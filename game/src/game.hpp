@@ -54,6 +54,7 @@ private:
 
 	std::unique_ptr<ALLEGRO_VOICE, al_voice_deleter> voice;
 	std::unique_ptr<ALLEGRO_AUDIO_STREAM, al_audio_stream_deleter> stream;
+	std::unique_ptr<ALLEGRO_SAMPLE, al_sample_deleter> dead;
 
     std::vector<std::unique_ptr<Object>> objects_;
     std::vector<std::unique_ptr<Food>> foods_;
