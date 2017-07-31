@@ -132,14 +132,20 @@ void Cyclist::update_impl(double delta_t)
 	if (colliding)
 	{
 		pos_ += colliding->get_speed() * delta_t;
-		sprinting_ratio_ = 1.f;
+		sprinting_ratio_ = colliding->get_speed() / speed_; // always < 1.0, for "aspiration" effect
 	}
 	else {
 		pos_ = new_pos;
 	}
 
     update_track_change(delta_t);
-    power_ -= 100. * sprinting_ratio_ * delta_t;
+
+	if (colliding) { // "Aspiration" effect, consume less power
+		power_ -= 50. * sprinting_ratio_ * delta_t;
+	}
+	else {
+		power_ -= 100. * sprinting_ratio_ * delta_t;
+	}
 
     if (power_ < 0) //LOST
     {
