@@ -54,7 +54,6 @@ private:
 
     float power_;
     float track_change_time_;
-    int new_track_;
     bool paused_;
     //Right now, a soft maxpower used to limit the drawing of power
     static const int maxpower = 1500;

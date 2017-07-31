@@ -215,8 +215,6 @@ bool Cyclist::alive() const
 void Cyclist::update_track_change(float delta_t)
 {
     track_change_time_ -= delta_t;
-   /* if (track_change_time_ > 0. && track_change_time_ < .2)
-        track_ = new_track_;*/
     if (track_change_time_ < 0.)
         track_change_time_ = 0;
 }
